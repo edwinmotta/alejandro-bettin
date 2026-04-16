@@ -1,111 +1,462 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Syntax Scramble</title>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshooting Simulator - English for IT</title>
+    <!-- Importamos Tailwind CSS para los estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para la barra de desplazamiento */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+        .bg-slate-900::-webkit-scrollbar-thumb {
+            background-color: #475569;
+        }
+    </style>
 </head>
+<body class="bg-slate-100 font-sans h-screen overflow-hidden text-slate-800">
 
-<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+    <!-- Contenedor Principal Split-Screen -->
+    <div class="flex flex-col md:flex-row h-full max-w-7xl mx-auto md:p-6">
+        
+        <!-- Columna Izquierda: Escenario (Panel Oscuro) -->
+        <div class="w-full md:w-1/3 bg-slate-900 text-white flex flex-col shrink-0 md:rounded-l-2xl border-b md:border-b-0 md:border-r border-slate-800 h-[30vh] md:h-full shadow-2xl z-10">
+            <!-- Encabezado -->
+            <div class="p-4 md:p-6 border-b border-slate-800 flex items-center gap-3 shrink-0 bg-slate-950 md:rounded-tl-2xl">
+                <div class="w-8 h-8 text-blue-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base md:text-lg">Tech English Tutor</h1>
+                    <p class="text-slate-400 text-[10px] md:text-xs uppercase tracking-wider">Simulador de Troubleshooting</p>
+                </div>
+            </div>
+            
+            <!-- Contenido del Escenario -->
+            <div class="p-4 md:p-6 flex-1 overflow-y-auto">
+                <div class="bg-slate-800 rounded-xl p-4 md:p-5 border border-slate-700 shadow-inner">
+                    <div class="flex items-center gap-2 mb-3">
+                        <svg class="w-5 h-5 text-blue-400 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <h2 class="font-bold text-base md:text-lg text-blue-50">Current Scenario</h2>
+                    </div>
+                    <h3 id="scenario-title" class="font-semibold text-blue-200 mb-2 text-base md:text-lg leading-tight">
+                        <!-- Título dinámico -->
+                    </h3>
+                    <p id="scenario-intro" class="text-slate-300 text-sm md:text-base leading-relaxed">
+                        <!-- Texto dinámico -->
+                    </p>
+                </div>
 
-<div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-2xl">
+                <div class="mt-4 md:mt-6 bg-slate-800/50 rounded-xl p-4 md:p-5 border border-slate-700/50 hidden md:block">
+                   <h4 class="text-xs md:text-sm font-semibold text-slate-400 mb-2 uppercase tracking-wide">Tu Objetivo</h4>
+                   <p class="text-xs md:text-sm text-slate-300">Haz las preguntas de diagnóstico correctas usando la gramática en inglés adecuada (Auxiliar + Sujeto + Verbo) para encontrar la causa raíz del problema.</p>
+                </div>
+            </div>
+        </div>
 
-<h1 class="text-2xl font-bold mb-4">Syntax Scramble</h1>
+        <!-- Columna Derecha: Chat y Opciones (Panel Claro) -->
+        <div class="flex-1 flex flex-col bg-slate-50 md:rounded-r-2xl shadow-2xl h-[70vh] md:h-full relative overflow-hidden">
+            
+            <!-- Área del Historial de Chat -->
+            <div id="chat-container" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 pb-32 md:pb-40">
+                <!-- Los mensajes se inyectarán aquí mediante JS -->
+            </div>
 
-<p class="mb-2 text-gray-600">The Client's Answer:</p>
-<p id="client" class="bg-blue-100 p-3 rounded mb-4"></p>
+            <!-- Área de Opciones Interactivas (Fija abajo) -->
+            <div class="absolute bottom-0 left-0 w-full bg-white border-t border-slate-200 shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20" id="controls-container">
+                <div class="p-4 md:p-6">
+                    <p id="options-label" class="text-sm font-semibold text-slate-600 mb-3">Choose your next question:</p>
+                    
+                    <!-- Botones de Opciones Dinámicos -->
+                    <div id="options-buttons" class="space-y-2 mb-4">
+                        <!-- Se inyectan mediante JS -->
+                    </div>
 
-<div id="selected" class="min-h-[60px] border p-3 rounded mb-4"></div>
+                    <!-- Divisor visual -->
+                    <div id="custom-divider" class="relative my-4 hidden md:block">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">O escribe tu propia pregunta</span>
+                        </div>
+                    </div>
 
-<div id="words" class="flex flex-wrap gap-2 mb-4"></div>
+                    <!-- Formulario para pregunta libre -->
+                    <form id="custom-form" class="mt-2 flex gap-2">
+                        <input type="text" id="custom-input" placeholder="e.g., Does the server..." class="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" autocomplete="off">
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
 
-<div class="flex gap-2">
-<button onclick="check()" class="bg-blue-600 text-white px-4 py-2 rounded">Check</button>
-<button onclick="reset()" class="bg-gray-300 px-4 py-2 rounded">Reset</button>
-</div>
-
-<p id="result" class="mt-4 font-bold"></p>
-
-</div>
-
-<script>
-
-const exercises = [
-{
-client: "Yes, I cook every day.",
-correct: ["Do","you","cook","every","day","?"]
-},
-{
-client: "She works in the office.",
-correct: ["Where","does","she","work","?"]
-}
-];
-
-let index = 0;
-let selected = [];
-let available = [];
-
-function loadExercise() {
-    const ex = exercises[index];
-    document.getElementById("client").innerText = ex.client;
-
-    selected = [];
-    available = [...ex.correct].sort(() => Math.random() - 0.5);
-
-    render();
-}
-
-function render() {
-    const selectedDiv = document.getElementById("selected");
-    const wordsDiv = document.getElementById("words");
-
-    selectedDiv.innerHTML = "";
-    wordsDiv.innerHTML = "";
-
-    selected.forEach((w, i) => {
-        const btn = document.createElement("button");
-        btn.innerText = w;
-        btn.className = "bg-blue-500 text-white px-3 py-1 rounded";
-        btn.onclick = () => {
-            available.push(w);
-            selected.splice(i,1);
-            render();
+    <!-- LÓGICA DE LA APLICACIÓN -->
+    <script>
+        // --- BASE DE DATOS DE LA HISTORIA (Role-play) ---
+        const storyData = {
+            scenario1: {
+                id: 'scenario1',
+                title: "Scenario 1: The Extremely Slow System",
+                intro: "The client reports that the main dashboard of the application is loading extremely slowly today. It takes almost a minute to see the information.",
+                nodes: {
+                    step1: {
+                        options: [
+                            { text: "Does this problem happen to all users, or just a few?", type: 'correct', feedback: "Excellent question! Perfect grammar (Auxiliary + Subject + Verb) and very logical for troubleshooting.", clue: "It happens to all users in the office, but the users working from home say it works perfectly.", next: 'step2' },
+                            { text: "Why the system is loading so slowly?", type: 'grammar_error', feedback: "Oops! Remember the auxiliary verb for Wh- questions. It should be: 'Why IS the system loading so slowly?'.", clue: "I don't know, that's why I called you! (Try a more specific diagnostic question)", next: 'step1' },
+                            { text: "Does the dashboard use a dark mode theme?", type: 'illogical', feedback: "Grammatically perfect! (Aux + Subject + Verb). However, it's not a logical question for a performance issue.", clue: "Yes, it's dark mode. But why is it slow? (Try another question)", next: 'step1' }
+                        ]
+                    },
+                    step2: {
+                        options: [
+                            { text: "When does this usually happen?", type: 'correct', feedback: "Great Wh- question! Very natural and perfectly structured.", clue: "It is very slow at 9:00 AM, but at 2:00 PM it works fine.", next: 'step3' },
+                            { text: "Does other pages load fast?", type: 'grammar_error', feedback: "Careful! 'pages' is plural, so we use 'Do' instead of 'Does'. Correct: 'Do other pages load fast?'", clue: "Yes, the login page and settings page are very fast.", next: 'step2' },
+                            { text: "What color is the server?", type: 'illogical', feedback: "Perfect grammar, but not helpful for our diagnosis!", clue: "I think it's black? I'm not sure how that helps...", next: 'step2' }
+                        ]
+                    },
+                    step3: {
+                        options: [
+                            { text: "Does the database show high CPU usage at 9:00 AM?", type: 'correct', feedback: "Excellent! You used 'Does' perfectly for the singular subject 'the database'.", clue: "Let me check... Yes! The database CPU spikes to 100% exactly at 9:00 AM.", next: 'step4' },
+                            { text: "Do the database show high CPU usage?", type: 'grammar_error', feedback: "'The database' is singular (it), so you must use 'Does'. 'Does the database show...?'", clue: "I am checking the monitoring tool, but please ask correctly.", next: 'step3' },
+                            { text: "Does the CEO know about this?", type: 'illogical', feedback: "Correct structure, but let's focus on the technical root cause first!", clue: "Not yet, let's fix it before he finds out!", next: 'step3' }
+                        ]
+                    },
+                    step4: {
+                        options: [
+                            { text: "What query does the dashboard run at startup?", type: 'correct', feedback: "Perfect Wh- question! 'What query' + 'does' + 'the dashboard' + 'run'. Flawless.", clue: "It runs a massive 'SELECT * FROM user_analytics' to load the initial charts.", next: 'step5' },
+                            { text: "What query do the dashboard run at startup?", type: 'grammar_error', feedback: "'The dashboard' is singular, so it requires 'does', not 'do'.", clue: "I can check the codebase, but try formulating the question again.", next: 'step4' },
+                            { text: "Where is the office located?", type: 'illogical', feedback: "Grammar is fine, but we are diagnosing a database issue now, not network latency.", clue: "We are in New York. But the server is on AWS.", next: 'step4' }
+                        ]
+                    },
+                    step5: {
+                        options: [
+                            { text: "Does the database lock up because the query lacks pagination?", type: 'correct', feedback: "Spot on! Complex technical question with perfect grammar.", clue: "YES! Everyone in the office logs in at 9:00 AM and triggers that heavy unpaginated query at the same time. You found the root cause!", next: 'end1' },
+                            { text: "Does the database locks up because of the query?", type: 'grammar_error', feedback: "Remember: when you use the auxiliary 'Does', the main verb goes back to its base form (lock), without the 's'.", clue: "You are close, check your verb conjugation.", next: 'step5' },
+                            { text: "Do you like databases?", type: 'illogical', feedback: "Correct structure, but not the time for casual chat!", clue: "Not today, I hate them today.", next: 'step5' }
+                        ]
+                    }
+                }
+            },
+            scenario2: {
+                id: 'scenario2',
+                title: "Scenario 2: The Missing Email Notification",
+                intro: "A user complains that they are trying to reset their password, but they never receive the recovery email.",
+                nodes: {
+                    step1: {
+                        options: [
+                            { text: "Does the user check their SPAM folder?", type: 'correct', feedback: "Perfect! 'Does' is correctly used for 'the user'.", clue: "Yes, they checked. The SPAM folder is empty.", next: 'step2' },
+                            { text: "Do the user have internet?", type: 'grammar_error', feedback: "'The user' is singular (he/she), so you must use 'Does'. 'Does the user have internet?'", clue: "Yes, they are browsing the site right now.", next: 'step1' },
+                            { text: "Where is the email?", type: 'illogical', feedback: "Grammatically fine, but impossible for the client to answer.", clue: "If I knew where it was, I wouldn't be reporting an issue!", next: 'step1' }
+                        ]
+                    },
+                    step2: {
+                        options: [
+                            { text: "Do other automatic emails work?", type: 'correct', feedback: "Great job! 'Emails' is plural, so 'Do' is the correct auxiliary.", clue: "Yes! The 'Welcome' emails and the 'Weekly Newsletter' work perfectly. Only the password reset fails.", next: 'step3' },
+                            { text: "Does other automatic emails work?", type: 'grammar_error', feedback: "Since 'emails' is plural, you need to use 'Do' instead of 'Does'.", clue: "Let me check, hold on...", next: 'step2' },
+                            { text: "What is the user's favorite color?", type: 'illogical', feedback: "Perfect grammar, but completely irrelevant to our email issue.", clue: "Blue, I think? How does that help?", next: 'step2' }
+                        ]
+                    },
+                    step3: {
+                        options: [
+                            { text: "Does the system log show any errors?", type: 'correct', feedback: "Excellent! 'The system log' is singular, so 'Does' + base verb 'show' is correct.", clue: "Actually, no. The system says 'Email sent successfully', but nothing arrives. It's a silent failure.", next: 'step4' },
+                            { text: "Why the system log shows errors?", type: 'grammar_error', feedback: "Missing auxiliary! 'Why DOES the system log show errors?'", clue: "I am looking at the logs right now...", next: 'step3' },
+                            { text: "Does the user have a nice keyboard?", type: 'illogical', feedback: "Correct grammar, terrible troubleshooting step.", clue: "I am not looking at their desk.", next: 'step3' }
+                        ]
+                    },
+                    step4: {
+                        options: [
+                            { text: "What API key does the password reset module use?", type: 'correct', feedback: "Flawless technical question! You nailed the Wh- structure.", clue: "Oh! Let me check the environment variables... The SendGrid API key for the password module expired yesterday! We found the issue!", next: 'end2' },
+                            { text: "What API key do the password reset module use?", type: 'grammar_error', feedback: "'The password reset module' is a single thing (it), so it requires 'does'.", clue: "I am checking the code configuration...", next: 'step4' },
+                            { text: "When is your lunch break?", type: 'illogical', feedback: "Grammatically correct, but let's fix the bug before we eat!", clue: "In 10 minutes, so please hurry up!", next: 'step4' }
+                        ]
+                    }
+                }
+            },
+            scenario3: {
+                id: 'scenario3',
+                title: "Scenario 3: The Midnight Crashes (Master Level)",
+                intro: "The client reports that the payment microservice crashes completely every night around 2:00 AM. It restarts automatically, but some transactions are lost. We need to find the root cause.",
+                nodes: {
+                    step1: {
+                        options: [
+                            { text: "Does the microservice crash when the traffic is high?", type: 'correct', feedback: "Excellent start! Perfect grammar using 'Does' for the singular 'microservice'.", clue: "Actually, no. At 2:00 AM, the user traffic is extremely low. There are almost no clients online.", next: 'step2' },
+                            { text: "Why the microservice crashes at night?", type: 'grammar_error', feedback: "You forgot the auxiliary! For Wh- questions: Wh- word + auxiliary + subject + verb. 'Why DOES the microservice crash...?'", clue: "I'm not sure why it crashes, that's what we need to find out!", next: 'step1' },
+                            { text: "Does the CEO sleep at 2:00 AM?", type: 'illogical', feedback: "Perfect grammar, but completely irrelevant to our server crash!", clue: "I hope so! But let's focus on the microservice.", next: 'step1' }
+                        ]
+                    },
+                    step2: {
+                        options: [
+                            { text: "Do background jobs run at that time?", type: 'correct', feedback: "Spot on! 'jobs' is plural, so 'Do' is the correct auxiliary verb.", clue: "Yes, now that you mention it... A massive automated financial report runs every night at 1:45 AM.", next: 'step3' },
+                            { text: "Does background jobs run at that time?", type: 'grammar_error', feedback: "Careful! 'jobs' is plural. You must use 'Do' instead of 'Does'.", clue: "Let me check the scheduled tasks...", next: 'step2' },
+                            { text: "What is your favorite background color?", type: 'illogical', feedback: "Grammar is fine, but we are looking for background processes, not colors!", clue: "I prefer dark gray. But back to the issue...", next: 'step2' }
+                        ]
+                    },
+                    step3: {
+                        options: [
+                            { text: "Does the server run out of memory during the report generation?", type: 'correct', feedback: "Flawless grammar! 'Does' + 'the server' + base verb 'run'.", clue: "Let me look at the metrics... Wow! Yes, the RAM usage spikes from 20% to 100% in a few minutes, causing an Out-Of-Memory (OOM) error.", next: 'step4' },
+                            { text: "Do the server runs out of memory?", type: 'grammar_error', feedback: "Two mistakes here: 'server' is singular (requires 'Does'), and the main verb goes to base form (run, not runs).", clue: "I am checking the memory graphics right now.", next: 'step3' },
+                            { text: "How much does a new server cost?", type: 'illogical', feedback: "Correct structure, but let's try to fix the code before we spend money on more hardware!", clue: "Thousands of dollars! We can't buy one right now.", next: 'step3' }
+                        ]
+                    },
+                    step4: {
+                        options: [
+                            { text: "How many records does the report query fetch?", type: 'correct', feedback: "Beautiful Wh- question! Very professional and technically accurate.", clue: "I am looking at the database logs. It fetches all the transactions of the last 5 years. That's about 10 million rows!", next: 'step5' },
+                            { text: "How many records do the report query fetches?", type: 'grammar_error', feedback: "'the report query' is singular (it), so use 'does'. Also, the main verb must be 'fetch' without 'es'.", clue: "I am checking the SQL code...", next: 'step4' },
+                            { text: "What is the record for the fastest marathon?", type: 'illogical', feedback: "Grammar is great, but we are talking about database records, not sports!", clue: "Just over 2 hours! But what about the microservice?", next: 'step4' }
+                        ]
+                    },
+                    step5: {
+                        options: [
+                            { text: "Does the code use streams to process the data?", type: 'correct', feedback: "Perfect technical question with correct grammar.", clue: "Let me read the code... No, it doesn't. It executes a single 'SELECT *' and tries to save all 10 million rows into a single array in memory.", next: 'step6' },
+                            { text: "Does the code uses streams?", type: 'grammar_error', feedback: "Remember the golden rule: when you use 'Does', the main verb loses its 's'. It should be 'Does the code USE...'.", clue: "I'm looking at the data processing functions.", next: 'step5' },
+                            { text: "Do you watch streams on Twitch?", type: 'illogical', feedback: "Correct structure, but wrong type of 'stream'!", clue: "Sometimes, I like gaming streams. But what about our code?", next: 'step5' }
+                        ]
+                    },
+                    step6: {
+                        options: [
+                            { text: "What happens if we process the data in small chunks?", type: 'correct', feedback: "Excellent! 'What happens' is a special Wh- question where 'What' acts as the subject, so we use the 3rd person singular verb.", clue: "That's a great idea! If we use pagination or chunking, we won't overload the RAM. We can process 1,000 rows at a time.", next: 'step7' },
+                            { text: "What happen if we process the data?", type: 'grammar_error', feedback: "When 'What' acts as the subject, it is treated as singular, so you need the 's' in the verb: 'What happenS...'", clue: "I'm listening to your proposals...", next: 'step6' },
+                            { text: "Does the array like the data?", type: 'illogical', feedback: "Grammar is fine, but arrays don't have feelings!", clue: "I think the array is suffering right now.", next: 'step6' }
+                        ]
+                    },
+                    step7: {
+                        options: [
+                            { text: "Does the staging environment have the same dataset?", type: 'correct', feedback: "Flawless! 'environment' is singular -> 'Does', and the main verb is 'have' (base form).", clue: "Yes! We can deploy the fix to staging right now and run the heavy report to verify the memory stays stable. You solved the memory leak!", next: 'end3' },
+                            { text: "Do the staging environment has the same dataset?", type: 'grammar_error', feedback: "Two errors: use 'Does' for singular environment, and revert 'has' to its base form 'have'.", clue: "I want to test your fix, but please confirm the environment correctly.", next: 'step7' },
+                            { text: "Where is the stage for the concert?", type: 'illogical', feedback: "Perfect grammar, wrong context! We mean 'staging' as a test environment.", clue: "I have no idea about concerts right now.", next: 'step7' }
+                        ]
+                    }
+                }
+            }
         };
-        selectedDiv.appendChild(btn);
-    });
 
-    available.forEach((w, i) => {
-        const btn = document.createElement("button");
-        btn.innerText = w;
-        btn.className = "bg-gray-200 px-3 py-1 rounded";
-        btn.onclick = () => {
-            selected.push(w);
-            available.splice(i,1);
-            render();
+        // --- ICONOS SVG ---
+        const icons = {
+            bot: `<svg class="w-5 h-5 text-purple-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>`,
+            user: `<svg class="w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+            server: `<svg class="w-5 h-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>`,
+            correct: `<svg class="w-5 h-5 text-green-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>`,
+            error: `<svg class="w-5 h-5 text-orange-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+            sparkles: `<svg class="w-5 h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`
         };
-        wordsDiv.appendChild(btn);
-    });
-}
 
-function check() {
-    const correct = exercises[index].correct.join(" ");
-    const user = selected.join(" ");
+        // --- ESTADO DE LA APLICACIÓN ---
+        let currentScenarioObj = null;
+        let currentStepKey = '';
+        let isFinished = false;
 
-    if (user === correct) {
-        document.getElementById("result").innerText = "✅ Correct!";
-    } else {
-        document.getElementById("result").innerText = "❌ Try again";
-    }
-}
+        // Referencias al DOM
+        const chatContainer = document.getElementById('chat-container');
+        const optionsButtons = document.getElementById('options-buttons');
+        const customForm = document.getElementById('custom-form');
+        const customInput = document.getElementById('custom-input');
+        const controlsContainer = document.getElementById('controls-container');
+        const scenarioTitle = document.getElementById('scenario-title');
+        const scenarioIntro = document.getElementById('scenario-intro');
 
-function reset() {
-    loadExercise();
-}
+        // Inicializar el juego
+        function startGame(scenarioKey) {
+            currentScenarioObj = storyData[scenarioKey];
+            currentStepKey = 'step1';
+            isFinished = false;
+            
+            // Actualizar Panel Izquierdo
+            scenarioTitle.textContent = currentScenarioObj.title;
+            scenarioIntro.textContent = currentScenarioObj.intro;
+            
+            // Limpiar Chat
+            chatContainer.innerHTML = '';
+            controlsContainer.classList.remove('hidden');
 
-loadExercise();
+            // Mensaje de bienvenida
+            addMessageToChat('tutor', 'English Tutor', "Hello! Please read the technical scenario on the left. Based on that information, what is the first diagnostic question you should ask the client?", icons.bot);
 
-</script>
+            renderOptions();
+        }
 
+        // Utilidad para mezclar arreglos (Shuffle)
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Renderizar opciones actuales de forma aleatoria
+        function renderOptions() {
+            if (isFinished) {
+                controlsContainer.classList.add('hidden');
+                return;
+            }
+
+            const step = currentScenarioObj.nodes[currentStepKey];
+            const shuffledOptions = shuffleArray(step.options);
+            
+            optionsButtons.innerHTML = ''; // Limpiar botones
+
+            shuffledOptions.forEach((opt, index) => {
+                const letter = String.fromCharCode(65 + index); // A, B, C...
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 rounded-lg border border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-colors text-slate-700 font-medium flex items-start gap-3 bg-white";
+                
+                btn.innerHTML = `<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-bold shrink-0 mt-0.5">${letter}</span><span>${opt.text}</span>`;
+                
+                btn.onclick = () => handleOptionClick(opt);
+                optionsButtons.appendChild(btn);
+            });
+        }
+
+        // Lógica al hacer clic en una opción
+        function handleOptionClick(option) {
+            // 1. Pregunta del usuario
+            addMessageToChat('user', 'Software Engineer', option.text, icons.user);
+
+            // 2. Feedback del Tutor
+            const tutorIcon = option.type === 'correct' ? icons.correct : icons.error;
+            const tutorClass = option.type === 'correct' ? 'bg-green-50 border-green-200 text-green-900' : 'bg-orange-50 border-orange-200 text-orange-900';
+            addMessageToChat('tutor', 'English Tutor', option.feedback, tutorIcon, tutorClass);
+
+            // 3. Respuesta del Cliente
+            addMessageToChat('client', 'Client / System Log', option.clue, icons.server, 'bg-white border-slate-200 font-mono text-xs text-slate-800');
+
+            // 4. Avanzar o Terminar
+            if (option.next.startsWith('end')) {
+                handleEndScenario(option.next);
+            } else {
+                currentStepKey = option.next;
+                renderOptions();
+            }
+        }
+
+        // Lógica para pregunta escrita manualmente
+        customForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const val = customInput.value.trim();
+            if (!val) return;
+
+            addMessageToChat('user', 'Software Engineer (Custom)', val, icons.user);
+
+            // Verificación gramatical básica
+            const lowerQ = val.toLowerCase();
+            const hasAux = lowerQ.includes("do ") || lowerQ.includes("does ") || lowerQ.includes("is ") || lowerQ.includes("are ");
+            const hasWh = lowerQ.includes("what") || lowerQ.includes("where") || lowerQ.includes("when") || lowerQ.includes("why") || lowerQ.includes("how");
+
+            let tutorFeedback = "Good effort trying to write your own question! ";
+            if (hasAux || hasWh) {
+                tutorFeedback += "I see you used an auxiliary or a Wh- word. Excellent! ";
+            } else {
+                tutorFeedback += "Remember to use auxiliaries like 'Do' or 'Does' for technical questions. ";
+            }
+            tutorFeedback += "Since I am a static simulator, please choose one of the predefined options below to advance the scenario.";
+
+            addMessageToChat('tutor', 'English Tutor', tutorFeedback, icons.bot, 'bg-purple-50 border-purple-100 text-purple-900');
+            
+            customInput.value = '';
+        });
+
+        // Terminar el escenario y mostrar botones de siguiente
+        function handleEndScenario(endCode) {
+            isFinished = true;
+            controlsContainer.classList.add('hidden'); // Ocultar controles
+
+            setTimeout(() => {
+                let endMessage = "";
+                let btnHTML = "";
+
+                if (endCode === 'end1') {
+                    endMessage = "Congratulations! You successfully diagnosed the problem using excellent English grammar.\n\nWould you like to try Scenario 2: The Missing Email Notification?";
+                    btnHTML = `<button onclick="startGame('scenario2')" class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition shadow-sm mt-3">Start Scenario 2</button>`;
+                } else if (endCode === 'end2') {
+                    endMessage = "Awesome troubleshooting! You found the expired API key.\n\nAre you ready for the ultimate challenge? Scenario 3: The Midnight Crashes (7 levels deep!)";
+                    btnHTML = `<button onclick="startGame('scenario3')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition shadow-sm mt-3">Start Scenario 3 (Master Level)</button>`;
+                } else {
+                    endMessage = "Masterful debugging! You successfully found the memory leak and completed all 3 scenarios. Your grammar is top-notch!\n\nYou have finished the simulator exercises.";
+                    btnHTML = `<button onclick="startGame('scenario1')" class="bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-700 transition shadow-sm mt-3">Restart from the beginning</button>`;
+                }
+
+                // Inject end message
+                const id = 'msg-' + Date.now();
+                const html = `
+                <div class="flex gap-3" id="${id}">
+                    <div class="flex-shrink-0 mt-1">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center bg-yellow-100">
+                            ${icons.sparkles}
+                        </div>
+                    </div>
+                    <div class="max-w-[85%] md:max-w-[75%] text-left">
+                        <span class="text-xs text-slate-500 font-medium mb-1 block">English Tutor</span>
+                        <div class="p-3 rounded-2xl inline-block text-sm shadow-sm bg-yellow-50 border border-yellow-200 text-yellow-900 rounded-tl-none whitespace-pre-wrap">${endMessage}</div>
+                        <div>${btnHTML}</div>
+                    </div>
+                </div>`;
+                
+                chatContainer.insertAdjacentHTML('beforeend', html);
+                scrollToBottom();
+            }, 800);
+        }
+
+        // Utilidad para inyectar burbujas de chat
+        function addMessageToChat(senderType, roleName, text, iconSVG, customClasses = null) {
+            const isUser = senderType === 'user';
+            
+            // Asignar colores por defecto si no hay customClasses
+            let bubbleClasses = customClasses;
+            if (!bubbleClasses) {
+                if (isUser) bubbleClasses = 'bg-blue-600 text-white rounded-tr-none';
+                else if (senderType === 'tutor') bubbleClasses = 'bg-purple-50 border border-purple-100 text-purple-900 rounded-tl-none';
+            } else {
+                bubbleClasses += isUser ? ' rounded-tr-none' : ' rounded-tl-none border';
+            }
+
+            const avatarBg = isUser ? 'bg-blue-100' : (senderType === 'client' ? 'bg-slate-200' : 'bg-purple-100');
+            const layoutDirection = isUser ? 'flex-row-reverse' : '';
+            const textAlignment = isUser ? 'text-right' : 'text-left';
+
+            const html = `
+            <div class="flex gap-3 ${layoutDirection}">
+                <div class="flex-shrink-0 mt-1">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center ${avatarBg}">
+                        ${iconSVG}
+                    </div>
+                </div>
+                <div class="max-w-[85%] md:max-w-[75%] ${textAlignment}">
+                    <span class="text-xs text-slate-500 font-medium mb-1 block">${roleName}</span>
+                    <div class="p-3 rounded-2xl inline-block text-sm shadow-sm ${bubbleClasses}">
+                        <p class="whitespace-pre-wrap">${text}</p>
+                    </div>
+                </div>
+            </div>`;
+
+            chatContainer.insertAdjacentHTML('beforeend', html);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 50);
+        }
+
+        // Iniciar la aplicación en el Escenario 1 al cargar
+        window.onload = () => {
+            startGame('scenario1');
+        };
+
+    </script>
 </body>
 </html>
