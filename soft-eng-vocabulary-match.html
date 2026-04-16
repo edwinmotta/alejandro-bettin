@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Engineering Vocabulary Match</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Animación personalizada para el error */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 p-6 md:p-12 font-sans">
+    <div id="app" class="max-w-6xl mx-auto">
+        <!-- El contenido será renderizado por JavaScript -->
+    </div>
+
+    <script>
+        // Datos organizados por unidades
+        const UNITS = [
+            {
+                id: 1,
+                title: "Unidad 1: Conceptos Core y Lógica",
+                data: [
+                    { id: '1-1', term: 'Microservice', def: 'Un componente arquitectónico que opera como un servicio independiente, a menudo con su propia base de datos.' },
+                    { id: '1-2', term: 'Pipeline', def: 'Una secuencia automatizada de pasos en DevOps que a menudo construye, prueba y sube imágenes de contenedores a un registro.' },
+                    { id: '1-3', term: 'Index', def: 'Una estructura de base de datos creada específicamente para mejorar el rendimiento de ejecución de una consulta.' },
+                    { id: '1-4', term: 'Payload', def: 'Los datos esenciales o información del usuario contenida en una solicitud o respuesta de API.' },
+                    { id: '1-5', term: 'Coverage', def: 'Una métrica utilizada en testing para indicar qué porcentaje del código es ejecutado por la suite de pruebas.' },
+                    { id: '1-6', term: 'Bottleneck', def: 'Un punto específico en un sistema (como una base de datos bajo alta carga) que limita el rendimiento general y el throughput.' },
+                    { id: '1-7', term: 'To Parse', def: 'Una acción de codificación utilizada para analizar y convertir sintácticamente datos a un formato estructurado.' },
+                    { id: '1-8', term: 'To Refactor', def: 'Una acción de depuración y mantenimiento para reestructurar código existente sin cambiar su comportamiento externo.' },
+                    { id: '1-9', term: 'Repository', def: 'Un espacio de colaboración centralizado donde los desarrolladores ramifican, hacen commits, revisan y fusionan código.' },
+                    { id: '1-10', term: 'To Render', def: 'Una acción de frontend (UI/UX) que significa dibujar o mostrar intuitivamente elementos visuales en la pantalla.' }
+                ]
+            },
+            {
+                id: 2,
+                title: "Unidad 2: Arquitectura, Seguridad y Acciones",
+                data: [
+                    { id: '2-1', term: 'Abstraction', def: 'Ocultar detalles de implementación complejos de un sistema detrás de una interfaz más simple y unificada.' },
+                    { id: '2-2', term: 'Load Balancer', def: 'Un componente de infraestructura que distribuye el tráfico de red entrante a través de múltiples servidores.' },
+                    { id: '2-3', term: 'Transaction', def: 'Una secuencia de operaciones de base de datos realizadas como una unidad de trabajo lógica, única e indivisible.' },
+                    { id: '2-4', term: 'Endpoint', def: 'Una URL o URI específica donde una aplicación cliente puede acceder a una API.' },
+                    { id: '2-5', term: 'Mock', def: 'Un objeto simulado que imita el comportamiento de componentes reales de manera controlada para realizar pruebas.' },
+                    { id: '2-6', term: 'Latency', def: 'El retraso o el tiempo que tarda un paquete de datos en viajar desde su origen hasta su destino.' },
+                    { id: '2-7', term: 'Vulnerability', def: 'Una falla o debilidad en los procedimientos de seguridad del sistema, diseño o implementación que puede ser explotada.' },
+                    { id: '2-8', term: 'To Catch', def: 'Una acción de depuración utilizada para interceptar y manejar un error o excepción durante la ejecución del programa.' },
+                    { id: '2-9', term: 'To Iterate', def: 'Una acción de codificación que significa ejecutar repetidamente un conjunto de instrucciones, a menudo iterando a través de una colección de datos.' },
+                    { id: '2-10', term: 'Merge', def: 'El proceso colaborativo de combinar cambios de código de diferentes ramas en un sistema de control de versiones.' }
+                ]
+            },
+            {
+                id: 3,
+                title: "Unidad 3: Observabilidad, Algoritmos y Gestión",
+                data: [
+                    { id: '3-1', term: 'Throughput', def: 'La cantidad de datos o número de solicitudes procesadas con éxito dentro de un marco de tiempo específico.' },
+                    { id: '3-2', term: 'Scalability', def: 'La capacidad de un sistema para manejar una cantidad creciente de trabajo, o su potencial para ser ampliado y acomodar ese crecimiento.' },
+                    { id: '3-3', term: 'Pull Request', def: 'Un mecanismo para notificar a los miembros del equipo que una característica está completada y lista para revisión de código antes de la integración.' },
+                    { id: '3-4', term: 'To Assert', def: 'Una acción de testing utilizada para declarar y verificar que una condición o resultado específico se evalúa como verdadero.' },
+                    { id: '3-5', term: 'Metric', def: 'Una medida cuantificable utilizada para rastrear, monitorear y evaluar el estado o rendimiento de un proceso de sistema específico.' },
+                    { id: '3-6', term: 'Backlog', def: 'Una cola priorizada o lista de tareas, nuevas características y errores que deben abordarse en el proyecto de software.' },
+                    { id: '3-7', term: 'Time Complexity', def: 'Un concepto computacional que describe la cantidad de tiempo que tarda en ejecutarse un algoritmo a medida que crece el tamaño de la entrada.' },
+                    { id: '3-8', term: 'To Bind', def: 'Una acción de codificación que significa vincular o conectar estrechamente una variable, función o datos a un alcance específico o elemento UI.' },
+                    { id: '3-9', term: 'Outage', def: 'Un período de tiempo en el que un sistema, red o servicio falla completamente en proporcionar su funcionalidad esperada a los usuarios.' },
+                    { id: '3-10', term: 'Encryption', def: 'El proceso de seguridad de convertir datos a un formato codificado e ilegible para prevenir el acceso no autorizado.' }
+                ]
+            }
+        ];
+
+        // Estado del juego
+        let currentUnitIndex = 0;
+        let terms = [];
+        let definitions = [];
+        let selectedTerm = null;
+        let selectedDef = null;
+        let matchedPairs = [];
+        let mistakes = 0;
+        let errorState = false;
+
+        // Elementos del DOM
+        const appDiv = document.getElementById('app');
+
+        // Función de utilidad para mezclar arrays
+        const shuffleArray = (array) => {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        };
+
+        // Inicializar una unidad
+        const loadUnit = (unitIndex) => {
+            currentUnitIndex = unitIndex;
+            const unitData = UNITS[unitIndex].data;
+            terms = shuffleArray([...unitData]);
+            definitions = shuffleArray([...unitData]);
+            matchedPairs = [];
+            mistakes = 0;
+            selectedTerm = null;
+            selectedDef = null;
+            errorState = false;
+            render();
+        };
+
+        // Manejar clics
+        const handleTermClick = (item) => {
+            if (matchedPairs.includes(item.id) || errorState) return;
+            selectedTerm = selectedTerm?.id === item.id ? null : item;
+            checkMatch();
+        };
+
+        const handleDefClick = (item) => {
+            if (matchedPairs.includes(item.id) || errorState) return;
+            selectedDef = selectedDef?.id === item.id ? null : item;
+            checkMatch();
+        };
+
+        // Lógica de coincidencia
+        const checkMatch = () => {
+            if (selectedTerm && selectedDef) {
+                if (selectedTerm.id === selectedDef.id) {
+                    // Match correcto
+                    matchedPairs.push(selectedTerm.id);
+                    selectedTerm = null;
+                    selectedDef = null;
+                    render();
+                } else {
+                    // Match incorrecto
+                    errorState = true;
+                    mistakes++;
+                    render();
+                    
+                    setTimeout(() => {
+                        selectedTerm = null;
+                        selectedDef = null;
+                        errorState = false;
+                        render();
+                    }, 800);
+                }
+            } else {
+                render();
+            }
+        };
+
+        // Renderizado principal
+        const render = () => {
+            const currentUnit = UNITS[currentUnitIndex];
+            const isGameComplete = matchedPairs.length === currentUnit.data.length && currentUnit.data.length > 0;
+            const isLastUnit = currentUnitIndex === UNITS.length - 1;
+
+            let html = `
+                <!-- Header Section -->
+                <div class="mb-8 text-center">
+                    <div class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-800 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide mb-4">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        ${currentUnit.title}
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-3">
+                        Software Engineering Vocabulary
+                    </h1>
+                    <p class="text-slate-600 max-w-2xl mx-auto">
+                        Selecciona un concepto técnico a la izquierda, luego selecciona su definición correspondiente a la derecha.
+                    </p>
+                    
+                    <!-- Progress Indicators -->
+                    <div class="flex justify-center gap-2 mt-6 mb-2">
+                        ${UNITS.map((u, idx) => `
+                            <div class="h-2 w-12 rounded-full transition-colors ${idx === currentUnitIndex ? 'bg-indigo-600' : idx < currentUnitIndex ? 'bg-green-500' : 'bg-slate-200'}"></div>
+                        `).join('')}
+                    </div>
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">
+                        Unidad ${currentUnitIndex + 1} de ${UNITS.length}
+                    </div>
+                    
+                    <div class="flex flex-wrap items-center justify-center gap-4 text-sm font-medium">
+                        <div class="bg-white px-4 py-2 rounded-full shadow-sm border border-slate-200 flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-green-500"></i>
+                            Aciertos: ${matchedPairs.length} / ${currentUnit.data.length}
+                        </div>
+                        <div class="bg-white px-4 py-2 rounded-full shadow-sm border border-slate-200 flex items-center gap-2">
+                            <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
+                            Errores: ${mistakes}
+                        </div>
+                        <button onclick="loadUnit(${currentUnitIndex})" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-full shadow-sm border border-slate-200 flex items-center gap-2 transition-colors">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            Reiniciar Unidad
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            if (isGameComplete) {
+                html += `
+                    <!-- Game Complete State -->
+                    <div class="mb-8 bg-white border-2 border-green-200 rounded-2xl p-8 text-center shadow-lg transition-all duration-500 transform scale-100 opacity-100">
+                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="award" class="w-10 h-10 text-green-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-2">¡Unidad Completada con Éxito!</h2>
+                        <p class="text-slate-600 mb-8 max-w-md mx-auto">
+                            Dominaste estos ${currentUnit.data.length} conceptos con solo ${mistakes} error${mistakes !== 1 ? 'es' : ''}.
+                        </p>
+                        
+                        <div class="flex justify-center gap-4">
+                            ${!isLastUnit ? `
+                                <button onclick="loadUnit(${currentUnitIndex + 1})" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl font-bold shadow-md transition-colors flex items-center gap-2">
+                                    Continuar a la Siguiente Unidad <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                                </button>
+                            ` : `
+                                <button onclick="loadUnit(0)" class="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-xl font-bold shadow-md transition-colors flex items-center gap-2">
+                                    <i data-lucide="refresh-cw" class="w-5 h-5"></i> Jugar Todas las Unidades de Nuevo
+                                </button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <!-- Board Section -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 lg:gap-12">
+                        
+                        <!-- Left Column: Terms -->
+                        <div class="flex flex-col gap-3">
+                            <h3 class="text-sm font-bold text-slate-400 mb-1 px-2 uppercase tracking-widest">Conceptos y Acciones</h3>
+                            ${terms.map(item => {
+                                const isMatched = matchedPairs.includes(item.id);
+                                const isSelected = selectedTerm?.id === item.id;
+                                const isError = isSelected && errorState;
+
+                                let btnClass = "text-left p-4 rounded-xl border-2 transition-all duration-200 outline-none w-full ";
+                                if (isMatched) {
+                                    btnClass += "bg-slate-50 border-slate-200 text-slate-300 cursor-not-allowed transform scale-95 opacity-50";
+                                } else if (isError) {
+                                    btnClass += "bg-red-50 border-red-400 text-red-700 animate-shake";
+                                } else if (isSelected) {
+                                    btnClass += "bg-indigo-50 border-indigo-500 text-indigo-800 shadow-md ring-2 ring-indigo-200 scale-[1.02]";
+                                } else {
+                                    btnClass += "bg-white border-slate-200 hover:border-indigo-300 hover:shadow-md cursor-pointer text-slate-700";
+                                }
+
+                                return `
+                                    <button 
+                                        ${isMatched || errorState ? 'disabled' : ''} 
+                                        onclick='handleTermClick(${JSON.stringify(item)})' 
+                                        class="${btnClass}"
+                                    >
+                                        <span class="font-bold text-lg">${item.term}</span>
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+
+                        <!-- Right Column: Definitions -->
+                        <div class="flex flex-col gap-3">
+                            <h3 class="text-sm font-bold text-slate-400 mb-1 px-2 uppercase tracking-widest">Definiciones</h3>
+                            ${definitions.map(item => {
+                                const isMatched = matchedPairs.includes(item.id);
+                                const isSelected = selectedDef?.id === item.id;
+                                const isError = isSelected && errorState;
+
+                                let btnClass = "text-left p-4 rounded-xl border-2 transition-all duration-200 outline-none w-full ";
+                                if (isMatched) {
+                                    btnClass += "bg-slate-50 border-slate-200 text-slate-300 cursor-not-allowed transform scale-95 opacity-50";
+                                } else if (isError) {
+                                    btnClass += "bg-red-50 border-red-400 text-red-700 animate-shake";
+                                } else if (isSelected) {
+                                    btnClass += "bg-indigo-50 border-indigo-500 text-indigo-800 shadow-md ring-2 ring-indigo-200 scale-[1.02]";
+                                } else {
+                                    btnClass += "bg-white border-slate-200 hover:border-indigo-300 hover:shadow-md cursor-pointer text-slate-700";
+                                }
+
+                                return `
+                                    <button 
+                                        ${isMatched || errorState ? 'disabled' : ''} 
+                                        onclick='handleDefClick(${JSON.stringify(item)})' 
+                                        class="${btnClass}"
+                                    >
+                                        <span class="text-base leading-relaxed font-medium">${item.def}</span>
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            appDiv.innerHTML = html;
+            
+            // Re-inicializar los iconos de Lucide después de actualizar el DOM
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        };
+
+        // Iniciar el juego
+        loadUnit(0);
+    </script>
+</body>
+</html>
