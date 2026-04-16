@@ -1,407 +1,111 @@
-import React, { useState, useEffect } from 'react';
-import { CheckCircle2, AlertCircle, ArrowRight, RotateCcw, Terminal } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Syntax Scramble</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-// --- BASE DE DATOS DE EJERCICIOS ---
-// 5 preguntas de calentamiento + 10 preguntas técnicas
+<body class="bg-slate-100 flex items-center justify-center min-h-screen p-4">
+
+<div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-2xl">
+
+<h1 class="text-2xl font-bold mb-4">Syntax Scramble</h1>
+
+<p class="mb-2 text-gray-600">The Client's Answer:</p>
+<p id="client" class="bg-blue-100 p-3 rounded mb-4"></p>
+
+<div id="selected" class="min-h-[60px] border p-3 rounded mb-4"></div>
+
+<div id="words" class="flex flex-wrap gap-2 mb-4"></div>
+
+<div class="flex gap-2">
+<button onclick="check()" class="bg-blue-600 text-white px-4 py-2 rounded">Check</button>
+<button onclick="reset()" class="bg-gray-300 px-4 py-2 rounded">Reset</button>
+</div>
+
+<p id="result" class="mt-4 font-bold"></p>
+
+</div>
+
+<script>
+
 const exercises = [
-  // FASE 1: WARM UP (Día a día)
-  {
-    id: 1,
-    phase: "Phase 1: Warm Up",
-    clientAnswer: "Yes, I cook every day.",
-    correctQuestion: ["Do", "you", "cook", "every", "day", "?"],
-    hint: "Start with the auxiliary for 'you'."
-  },
-  {
-    id: 2,
-    phase: "Phase 1: Warm Up",
-    clientAnswer: "She works in the main office.",
-    correctQuestion: ["Where", "does", "she", "work", "?"],
-    hint: "We are asking about a place (the office)."
-  },
-  {
-    id: 3,
-    phase: "Phase 1: Warm Up",
-    clientAnswer: "No, they don't like coffee.",
-    correctQuestion: ["Do", "they", "like", "coffee", "?"],
-    hint: "It's a Yes/No question about a plural subject (they)."
-  },
-  {
-    id: 4,
-    phase: "Phase 1: Warm Up",
-    clientAnswer: "The meeting starts at 9:00 AM.",
-    correctQuestion: ["When", "does", "the", "meeting", "start", "?"],
-    hint: "Ask about the time. 'The meeting' is singular (it)."
-  },
-  {
-    id: 5,
-    phase: "Phase 1: Warm Up",
-    clientAnswer: "I use a Mac for my daily work.",
-    correctQuestion: ["What", "do", "you", "use", "for", "your", "daily", "work", "?"],
-    hint: "Ask about the object (a Mac). Watch the subject!"
-  },
-  
-  // FASE 2: TECH ENGLISH (Ingeniería)
-  {
-    id: 6,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "Yes, the index improves the performance of the query.",
-    correctQuestion: ["Does", "the", "index", "improve", "the", "performance", "of", "the", "query", "?"],
-    hint: "Start with the auxiliary for 'the index' (singular)."
-  },
-  {
-    id: 7,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "The request payload contains the user information.",
-    correctQuestion: ["What", "does", "the", "request", "payload", "contain", "?"],
-    hint: "Use a Wh- word for things, then the auxiliary."
-  },
-  {
-    id: 8,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "The deployment pipeline pushes the container image to the registry.",
-    correctQuestion: ["Where", "does", "the", "deployment", "pipeline", "push", "the", "container", "image", "?"],
-    hint: "We are asking about a destination (the registry)."
-  },
-  {
-    id: 9,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "No, the authentication service uses its own database.",
-    correctQuestion: ["Does", "the", "authentication", "service", "use", "the", "main", "database", "?"],
-    hint: "It's a Yes/No question about a singular service."
-  },
-  {
-    id: 10,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "The system throws an exception when the password is wrong.",
-    correctQuestion: ["When", "does", "the", "system", "throw", "an", "exception", "?"],
-    hint: "Ask about the condition/time of the error."
-  },
-  {
-    id: 11,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "The database is the main bottleneck under high load.",
-    correctQuestion: ["What", "is", "the", "main", "bottleneck", "under", "high", "load", "?"],
-    hint: "Careful! When using the verb 'To Be' (is), we don't use Do/Does."
-  },
-  {
-    id: 12,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "We run the test suite every night at 2:00 AM.",
-    correctQuestion: ["When", "do", "you", "run", "the", "test", "suite", "?"],
-    hint: "Asking about time. Careful with the pronoun 'you'!"
-  },
-  {
-    id: 13,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "Yes, the gateway requires a valid token for authorization.",
-    correctQuestion: ["Does", "the", "gateway", "require", "a", "valid", "token", "for", "authorization", "?"],
-    hint: "A Yes/No question for a singular component."
-  },
-  {
-    id: 14,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "The application renders the dashboard in dark mode.",
-    correctQuestion: ["How", "does", "the", "application", "render", "the", "dashboard", "?"],
-    hint: "Ask about the manner/method (dark mode)."
-  },
-  {
-    id: 15,
-    phase: "Phase 2: Tech English",
-    clientAnswer: "The developer assigns the ticket to the QA team for review.",
-    correctQuestion: ["Who", "does", "the", "developer", "assign", "the", "ticket", "to", "?"],
-    hint: "Ask about the person receiving the ticket."
-  },
-  // FASE 3: HARDCORE MODE (Escritura libre sin ayuda)
-  {
-    id: 16,
-    phase: "Phase 3: Hardcore Mode",
-    type: "typing",
-    clientAnswer: "Yes, the load balancer distributes the traffic.",
-    correctQuestion: ["Does", "the", "load", "balancer", "distribute", "the", "traffic", "?"],
-    hint: "A Yes/No question about a singular component."
-  },
-  {
-    id: 17,
-    phase: "Phase 3: Hardcore Mode",
-    type: "typing",
-    clientAnswer: "The system encrypts the credentials to improve security.",
-    correctQuestion: ["Why", "does", "the", "system", "encrypt", "the", "credentials", "?"],
-    hint: "Ask about the reason or purpose."
-  },
-  {
-    id: 18,
-    phase: "Phase 3: Hardcore Mode",
-    type: "typing",
-    clientAnswer: "The junior developer resolves the merge conflict.",
-    correctQuestion: ["What", "does", "the", "junior", "developer", "resolve", "?"],
-    hint: "Ask about the object being resolved."
-  },
-  {
-    id: 19,
-    phase: "Phase 3: Hardcore Mode",
-    type: "typing",
-    clientAnswer: "The backend parses the JSON payload.",
-    correctQuestion: ["What", "does", "the", "backend", "parse", "?"],
-    hint: "Ask about the object being parsed."
-  },
-  {
-    id: 20,
-    phase: "Phase 3: Hardcore Mode",
-    type: "typing",
-    clientAnswer: "Yes, the server catches the exception.",
-    correctQuestion: ["Does", "the", "server", "catch", "the", "exception", "?"],
-    hint: "A Yes/No question. Use the verb 'catch'."
-  }
+{
+client: "Yes, I cook every day.",
+correct: ["Do","you","cook","every","day","?"]
+},
+{
+client: "She works in the office.",
+correct: ["Where","does","she","work","?"]
+}
 ];
 
-export default function App() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [availableWords, setAvailableWords] = useState([]);
-  const [selectedWords, setSelectedWords] = useState([]);
-  const [typedAnswer, setTypedAnswer] = useState("");
-  const [status, setStatus] = useState('playing'); // playing, correct, incorrect
-  const [score, setScore] = useState(0);
+let index = 0;
+let selected = [];
+let available = [];
 
-  const currentExercise = exercises[currentIndex];
+function loadExercise() {
+    const ex = exercises[index];
+    document.getElementById("client").innerText = ex.client;
 
-  // Initialize and shuffle words when exercise changes
-  useEffect(() => {
-    if (currentExercise) {
-      if (currentExercise.type === 'typing') {
-        setTypedAnswer("");
-      } else {
-        const shuffled = [...currentExercise.correctQuestion]
-          .map((word, index) => ({ id: `${word}-${index}`, text: word }))
-          .sort(() => Math.random() - 0.5);
-        
-        setAvailableWords(shuffled);
-        setSelectedWords([]);
-      }
-      setStatus('playing');
-    }
-  }, [currentIndex]);
+    selected = [];
+    available = [...ex.correct].sort(() => Math.random() - 0.5);
 
-  const handleWordClick = (wordObj) => {
-    if (status !== 'playing') return;
-    setAvailableWords(availableWords.filter(w => w.id !== wordObj.id));
-    setSelectedWords([...selectedWords, wordObj]);
-  };
-
-  const handleSelectedWordClick = (wordObj) => {
-    if (status !== 'playing') return;
-    setSelectedWords(selectedWords.filter(w => w.id !== wordObj.id));
-    setAvailableWords([...availableWords, wordObj]);
-  };
-
-  const handleCheck = () => {
-    let isCorrect = false;
-
-    if (currentExercise.type === 'typing') {
-      // Normalizamos: pasamos a minúsculas, quitamos espacios extra y signos de interrogación
-      const userAnswer = typedAnswer.toLowerCase().replace(/\s+/g, ' ').replace(/\?/g, '').trim();
-      const correctAnswer = currentExercise.correctQuestion.join(" ").toLowerCase().replace(/\s+/g, ' ').replace(/\?/g, '').trim();
-      
-      if (userAnswer === correctAnswer) {
-        isCorrect = true;
-      }
-    } else {
-      const userSentence = selectedWords.map(w => w.text).join(" ");
-      const correctSentence = currentExercise.correctQuestion.join(" ");
-      
-      if (userSentence === correctSentence) {
-        isCorrect = true;
-      }
-    }
-
-    if (isCorrect) {
-      setStatus('correct');
-      // ¡Otorgamos el doble de puntos por el esfuerzo de escribir!
-      setScore(score + (currentExercise.type === 'typing' ? 20 : 10));
-    } else {
-      setStatus('incorrect');
-    }
-  };
-
-  const handleReset = () => {
-    if (currentExercise.type === 'typing') {
-      setTypedAnswer("");
-    } else {
-      const allWords = [...selectedWords, ...availableWords].sort(() => Math.random() - 0.5);
-      setAvailableWords(allWords);
-      setSelectedWords([]);
-    }
-    setStatus('playing');
-  };
-
-  const handleNext = () => {
-    if (currentIndex < exercises.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      setStatus('finished');
-    }
-  };
-
-  if (status === 'finished') {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 font-sans text-slate-100">
-        <div className="bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-md w-full text-center border border-slate-700">
-          <Terminal className="w-16 h-16 text-green-400 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-2">Build Successful!</h1>
-          <p className="text-slate-400 mb-6">You have mastered technical question syntax.</p>
-          <div className="text-5xl font-black text-blue-400 mb-8">{score} XP</div>
-          <button 
-            onClick={() => { setCurrentIndex(0); setScore(0); }}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-          >
-            Play Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 md:p-8 font-sans">
-      <div className="w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200 flex flex-col h-[90vh] md:h-auto">
-        
-        {/* Encabezado */}
-        <div className="bg-slate-900 p-4 md:p-6 flex justify-between items-center text-white shrink-0">
-          <div className="flex items-center gap-3">
-            <Terminal className="w-6 h-6 text-blue-400" />
-            <div>
-              <h1 className="font-bold text-lg md:text-xl tracking-wide">Syntax Scramble</h1>
-              <span className="text-xs text-blue-400 font-medium tracking-wider uppercase">{currentExercise.phase}</span>
-            </div>
-          </div>
-          <div className="bg-slate-800 px-4 py-1.5 rounded-full text-sm font-semibold text-blue-300 border border-slate-700">
-            Level {currentIndex + 1} / {exercises.length}
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col">
-          
-          {/* Target Answer / Client Statement */}
-          <div className="mb-8">
-            <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">The Client's Answer:</p>
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
-              <p className="text-lg md:text-xl text-slate-800 font-medium">"{currentExercise.clientAnswer}"</p>
-            </div>
-            <p className="text-sm text-slate-400 mt-3 italic flex items-center gap-2">
-              <AlertCircle className="w-4 h-4" /> {currentExercise.hint}
-            </p>
-          </div>
-
-          {currentExercise.type === 'typing' ? (
-            <div className="mb-8 flex-1">
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Type your question:</p>
-              <textarea
-                value={typedAnswer}
-                onChange={(e) => setTypedAnswer(e.target.value)}
-                disabled={status !== 'playing'}
-                placeholder="Type the exact question here... (e.g. Does the system...?)"
-                className="w-full min-h-[120px] bg-slate-50 border-2 border-slate-300 rounded-xl p-4 text-lg font-medium text-slate-800 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all disabled:opacity-75 resize-none shadow-inner"
-              />
-            </div>
-          ) : (
-            <>
-              {/* Constructor Area (Drop Zone) */}
-              <div className="mb-8 flex-1">
-                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Construct your question:</p>
-                <div className="min-h-[80px] w-full bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl p-3 md:p-4 flex flex-wrap gap-2 items-start content-start">
-                  {selectedWords.length === 0 && (
-                    <span className="text-slate-400 italic m-2">Tap words below to build the sentence...</span>
-                  )}
-                  {selectedWords.map((word) => (
-                    <button
-                      key={word.id}
-                      onClick={() => handleSelectedWordClick(word)}
-                      disabled={status !== 'playing'}
-                      className={`px-4 py-2 md:py-3 bg-blue-600 text-white rounded-lg shadow-sm font-medium text-sm md:text-base transition-transform hover:-translate-y-1 ${status !== 'playing' ? 'cursor-default opacity-90' : 'cursor-pointer'}`}
-                    >
-                      {word.text}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Word Bank */}
-              <div className="mb-8 shrink-0">
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {availableWords.map((word) => (
-                    <button
-                      key={word.id}
-                      onClick={() => handleWordClick(word)}
-                      disabled={status !== 'playing'}
-                      className="px-4 py-2 md:py-3 bg-white border-2 border-slate-200 text-slate-700 rounded-lg shadow-sm font-medium text-sm md:text-base hover:border-blue-400 hover:text-blue-600 transition-colors cursor-pointer"
-                    >
-                      {word.text}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
-
-        </div>
-
-        {/* Footer Actions */}
-        <div className="p-4 md:p-6 bg-slate-50 border-t border-slate-200 shrink-0">
-          {status === 'playing' ? (
-            <div className="flex gap-3">
-              <button 
-                onClick={handleReset}
-                className="px-4 py-3 bg-slate-200 text-slate-700 rounded-xl font-semibold hover:bg-slate-300 transition-colors flex items-center justify-center"
-                aria-label="Reset words"
-              >
-                <RotateCcw className="w-5 h-5" />
-              </button>
-              <button 
-                onClick={handleCheck}
-                disabled={currentExercise.type === 'typing' ? typedAnswer.trim().length === 0 : selectedWords.length === 0}
-                className="flex-1 bg-slate-900 text-white py-3 px-6 rounded-xl font-bold text-lg hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Check Syntax
-              </button>
-            </div>
-          ) : (
-            <div className={`p-4 rounded-xl flex items-center justify-between ${status === 'correct' ? 'bg-green-100 border border-green-300' : 'bg-red-100 border border-red-300'}`}>
-              <div className="flex items-center gap-3">
-                {status === 'correct' ? (
-                  <CheckCircle2 className="w-8 h-8 text-green-600" />
-                ) : (
-                  <AlertCircle className="w-8 h-8 text-red-600" />
-                )}
-                <div>
-                  <h3 className={`font-bold text-lg ${status === 'correct' ? 'text-green-800' : 'text-red-800'}`}>
-                    {status === 'correct' ? 'Perfect logic!' : 'Syntax Error'}
-                  </h3>
-                  {status === 'incorrect' && (
-                     <p className="text-red-600 text-sm">Review the word order. Remember: Wh- word + Aux + Subject + Verb.</p>
-                  )}
-                </div>
-              </div>
-              
-              {status === 'correct' ? (
-                <button 
-                  onClick={handleNext}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-colors"
-                >
-                  Next <ArrowRight className="w-4 h-4" />
-                </button>
-              ) : (
-                <button 
-                  onClick={handleReset}
-                  className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg font-bold flex items-center gap-2 transition-colors"
-                >
-                  Try Again <RotateCcw className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-      </div>
-    </div>
-  );
+    render();
 }
+
+function render() {
+    const selectedDiv = document.getElementById("selected");
+    const wordsDiv = document.getElementById("words");
+
+    selectedDiv.innerHTML = "";
+    wordsDiv.innerHTML = "";
+
+    selected.forEach((w, i) => {
+        const btn = document.createElement("button");
+        btn.innerText = w;
+        btn.className = "bg-blue-500 text-white px-3 py-1 rounded";
+        btn.onclick = () => {
+            available.push(w);
+            selected.splice(i,1);
+            render();
+        };
+        selectedDiv.appendChild(btn);
+    });
+
+    available.forEach((w, i) => {
+        const btn = document.createElement("button");
+        btn.innerText = w;
+        btn.className = "bg-gray-200 px-3 py-1 rounded";
+        btn.onclick = () => {
+            selected.push(w);
+            available.splice(i,1);
+            render();
+        };
+        wordsDiv.appendChild(btn);
+    });
+}
+
+function check() {
+    const correct = exercises[index].correct.join(" ");
+    const user = selected.join(" ");
+
+    if (user === correct) {
+        document.getElementById("result").innerText = "✅ Correct!";
+    } else {
+        document.getElementById("result").innerText = "❌ Try again";
+    }
+}
+
+function reset() {
+    loadExercise();
+}
+
+loadExercise();
+
+</script>
+
+</body>
+</html>
