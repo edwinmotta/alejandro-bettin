@@ -1,17 +1,282 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>English for IT Platform</title>
-    <meta property="og:image" content="https://bolt.new/static/og_default.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://bolt.new/static/og_default.png" />
-    <script type="module" crossorigin src="/assets/index-BRaXI8lD.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-C-nANxhE.css">
-  <script async src="https://bolt.new/badge.js?s=00b30ff5-0f87-496c-aa53-0df2544e69e0"></script></head>
-  <body>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-950">
     <div id="root"></div>
-  </body>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Mock de Iconos (Simplificado para evitar dependencias pesadas de Lucide-React en CDN)
+        const Icon = ({ name, className }) => {
+            useEffect(() => { lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} className={className}></i>;
+        };
+
+        const UNITS = {
+            unit1: {
+                title: "Unit 1",
+                subtitle: "Core Architecture & DevOps",
+                color: "indigo",
+                questions: [
+                    { id: 1, context: "Morning Routine & Git", text: "Every morning, I usually pull the latest changes from the remote _____. After that, I check my local branch before I start my work.", options: ["Container", "Repository", "Gateway", "Artifact"], correctAnswer: "Repository" },
+                    { id: 2, context: "Performance Troubleshooting", text: "The users always complain about the application speed. First, we check the network logs. Then, we measure the _____, which is the time delay between a user clicking a button and the server responding.", options: ["Latency", "Throughput", "Coverage", "Time Complexity"], correctAnswer: "Latency" },
+                    { id: 3, context: "Code Maintenance", text: "Sometimes the code works, but it is very messy. Later, I usually take some time to _____ the code. This means I clean up the structure without changing what the software actually does.", options: ["Debug", "Parse", "Assign", "Refactor"], correctAnswer: "Refactor" },
+                    { id: 4, context: "End of Sprint", text: "We always finish our sprints on Fridays. Next, the DevOps team handles the _____. They push the final software from our staging environment to the production servers.", options: ["Index", "Deployment", "Vulnerability", "Algorithm"], correctAnswer: "Deployment" },
+                    { id: 5, context: "API Communication", text: "When you send a POST request to the API, you must format the data correctly. The actual data inside the request is called the _____. After that, the server processes it.", options: ["Endpoint", "Token", "Payload", "Mock"], correctAnswer: "Payload" },
+                    { id: 6, context: "System Monitoring", text: "During high traffic, our system frequently slows down. We monitor the CPU usage, and then we realize the database is the main _____. It limits the overall performance of the whole application.", options: ["Load Balancer", "Bottleneck", "Monolith", "Test Suite"], correctAnswer: "Bottleneck" },
+                    { id: 7, context: "Security & Login", text: "Security is very important in our team. When a user logs in, they always receive an encrypted _____. Later, they use this piece of data to access private areas of the application.", options: ["Token", "Query", "Index", "Pipeline"], correctAnswer: "Token" },
+                    { id: 8, context: "Fixing Production", text: "There is a critical error in production. First, I read the error logs. Next, I try to _____ the code locally to identify the exact line where the bug occurs.", options: ["Render", "Assert", "Debug", "Loop"], correctAnswer: "Debug" },
+                    { id: 9, context: "Architecture Planning", text: "We never build one giant application anymore. Instead, we divide the system into smaller parts. Each _____ handles a specific business capability and communicates via APIs.", options: ["Microservice", "Monolith", "Cluster", "Repository"], correctAnswer: "Microservice" },
+                    { id: 10, context: "Automation Workflows", text: "We automate our entire workflow. First, we commit the code. Then, the CI/CD _____ automatically runs all the tests and prepares the code for release.", options: ["Algorithm", "Gateway", "Pipeline", "Coverage"], correctAnswer: "Pipeline" }
+                ]
+            },
+            unit2: {
+                title: "Unit 2",
+                subtitle: "Git, Testing & Management",
+                color: "emerald",
+                questions: [
+                    { id: 11, context: "Starting a New Feature", text: "When I start a new feature, I always create a new _____ from the main code. Then, I work on my specific tasks without affecting the rest of the team.", options: ["Layer", "Branch", "Milestone", "Metric"], correctAnswer: "Branch" },
+                    { id: 12, context: "Saving Progress", text: "After I finish writing the code, I usually save my progress. Next, I write a descriptive _____ message to explain the changes I made to the project.", options: ["Incident", "Ticket", "Schema", "Commit"], correctAnswer: "Commit" },
+                    { id: 13, context: "Unit Testing", text: "When we write unit tests, we first call the function. After that, we write an _____ to check if the output exactly matches our expected result.", options: ["Exception", "Assertion", "Interface", "Dependency"], correctAnswer: "Assertion" },
+                    { id: 14, context: "Database Extraction", text: "If a customer needs a specific report, we sometimes write a custom SQL _____. Then, the database processes it and returns the exact records we requested.", options: ["Protocol", "Header", "Query", "Shard"], correctAnswer: "Query" },
+                    { id: 15, context: "Project Planning", text: "Before we write any code, the product manager always explains the new business _____. Later, we break this big idea into smaller development tasks.", options: ["Requirement", "Backlog", "Artifact", "Policy"], correctAnswer: "Requirement" },
+                    { id: 16, context: "Frontend UI", text: "When the user opens the webpage, the browser first downloads the code. Next, it uses React to _____ the visual components on the screen so they become visible.", options: ["Parse", "Render", "Catch", "Sync"], correctAnswer: "Render" },
+                    { id: 17, context: "Deployment Stages", text: "We never test new features directly on the live server. First, we deploy everything to a safe staging _____. After that, we move it to production.", options: ["Environment", "Cluster", "Contract", "Component"], correctAnswer: "Environment" },
+                    { id: 18, context: "Cybersecurity", text: "The security team frequently scans our application. If they find a critical _____, we always fix it immediately before hackers can exploit it.", options: ["Conflict", "Breach", "Vulnerability", "Defect"], correctAnswer: "Vulnerability" },
+                    { id: 19, context: "System Observability", text: "Every morning, I usually open the main monitoring _____. It visually displays all the important metrics and system alerts on one single screen.", options: ["Registry", "Log", "Dashboard", "Trace"], correctAnswer: "Dashboard" },
+                    { id: 20, context: "Code Integration", text: "When my code review is approved, I finally _____ my changes into the main branch. Next, the automated systems start working to build the app.", options: ["Merge", "Handle", "Bind", "Iterate"], correctAnswer: "Merge" }
+                ]
+            },
+            unit3: {
+                title: "Unit 3",
+                subtitle: "Coding Actions & Logic",
+                color: "cyan",
+                questions: [
+                    { id: 21, context: "Handling JSON Data", text: "When the API returns a string of text, we cannot use it directly. First, we must _____ the JSON string to convert it into a usable JavaScript object.", options: ["Compile", "Throw", "Parse", "Render"], correctAnswer: "Parse" },
+                    { id: 22, context: "Repeating Tasks", text: "If we need to process 100 user records, we never write the code 100 times. Instead, we use a `for` _____ to execute the same block of code multiple times automatically.", options: ["Loop", "Variable", "Catch", "Event"], correctAnswer: "Loop" },
+                    { id: 23, context: "Navigating Data", text: "To find a specific user in a long list, I usually _____ through the entire collection, checking each item one by one until I find the correct name.", options: ["Iterate", "Define", "Deploy", "Assign"], correctAnswer: "Iterate" },
+                    { id: 24, context: "Transforming Lists", text: "We frequently receive raw database records. Later, we _____ these records into a new format, changing how the data looks before showing it to the user.", options: ["Map", "Sort", "Sync", "Read"], correctAnswer: "Map" },
+                    { id: 25, context: "UI Interactivity", text: "When creating a button, it does nothing by itself. First, you must _____ a specific click event to it, so it knows what function to run when clicked.", options: ["Throw", "Bind", "Mock", "Query"], correctAnswer: "Bind" },
+                    { id: 26, context: "Preparing Software", text: "Before we share the application, we cannot just send the raw source code. We always _____ the project first to create an optimized, executable version.", options: ["Log", "Build", "Trace", "Catch"], correctAnswer: "Build" },
+                    { id: 27, context: "Memory Management", text: "When we calculate the final price of an order, we don't just lose the number. We _____ that value to a specific label in memory so we can use it later.", options: ["Filter", "Call", "Assign", "Request"], correctAnswer: "Assign" },
+                    { id: 28, context: "Storing Collections", text: "Sometimes, we need to store multiple email addresses together. Instead of creating ten different labels, we group them all inside a single _____.", options: ["String", "Function", "Array", "Boolean"], correctAnswer: "Array" },
+                    { id: 29, context: "Storing State", text: "If the user changes their language preference to Spanish, we save that setting. We store the word 'Spanish' inside a _____ that changes based on user choices.", options: ["Constant", "Variable", "Method", "Class"], correctAnswer: "Variable" },
+                    { id: 30, context: "Reusable Logic", text: "We hate repeating code. If we need to calculate taxes in five different places, we write a single _____ and then just call it whenever we need the calculation.", options: ["Interface", "Function", "Node", "Index"], correctAnswer: "Function" }
+                ]
+            }
+        };
+
+        function App() {
+            const [activeUnit, setActiveUnit] = useState(null);
+            const [currentIndex, setCurrentIndex] = useState(0);
+            const [score, setScore] = useState(0);
+            const [selectedOption, setSelectedOption] = useState(null);
+            const [isAnswerChecked, setIsAnswerChecked] = useState(false);
+            const [showResults, setShowResults] = useState(false);
+
+            const startUnit = (unitKey) => {
+                setActiveUnit(unitKey);
+                setCurrentIndex(0);
+                setScore(0);
+                setSelectedOption(null);
+                setIsAnswerChecked(false);
+                setShowResults(false);
+            };
+
+            const goHome = () => {
+                setActiveUnit(null);
+                setShowResults(false);
+            };
+
+            const currentUnitData = activeUnit ? UNITS[activeUnit] : null;
+            const currentQuestions = currentUnitData ? currentUnitData.questions : [];
+            const currentQuestion = currentQuestions[currentIndex];
+
+            const handleOptionClick = (option) => {
+                if (isAnswerChecked) return;
+                setSelectedOption(option);
+                setIsAnswerChecked(true);
+                if (option === currentQuestion.correctAnswer) {
+                    setScore(prev => prev + 1);
+                }
+            };
+
+            const handleNextQuestion = () => {
+                if (currentIndex + 1 < currentQuestions.length) {
+                    setCurrentIndex(prev => prev + 1);
+                    setSelectedOption(null);
+                    setIsAnswerChecked(false);
+                } else {
+                    setShowResults(true);
+                }
+            };
+
+            const getRank = () => {
+                if (score === 10) return { title: "Principal Engineer", color: "text-amber-400", desc: "¡Impecable! Tienes un dominio perfecto del vocabulario profesional." };
+                if (score >= 7) return { title: "Senior Engineer", color: "text-emerald-400", desc: "¡Buen trabajo! Puedes comunicarte fácilmente en un entorno de TI real." };
+                if (score >= 4) return { title: "Mid-Level Engineer", color: "text-blue-400", desc: "Buen esfuerzo, pero hay margen de mejora en algunas áreas." };
+                return { title: "Junior Engineer", color: "text-slate-400", desc: "¡Sigue practicando! Revisa los términos e intenta la evaluación nuevamente." };
+            };
+
+            const getColorClasses = (type) => {
+                if (!currentUnitData) return "";
+                const color = currentUnitData.color;
+                const colors = {
+                    indigo: { bg: 'bg-indigo-500', text: 'text-indigo-400', borderHover: 'hover:border-indigo-500', bgHover: 'hover:bg-indigo-900/20', btn: 'bg-indigo-600 hover:bg-indigo-500', tagText: 'text-indigo-300' },
+                    emerald: { bg: 'bg-emerald-500', text: 'text-emerald-400', borderHover: 'hover:border-emerald-500', bgHover: 'hover:bg-emerald-900/20', btn: 'bg-emerald-600 hover:bg-emerald-500', tagText: 'text-emerald-300' },
+                    cyan: { bg: 'bg-cyan-500', text: 'text-cyan-400', borderHover: 'hover:border-cyan-500', bgHover: 'hover:bg-cyan-900/20', btn: 'bg-cyan-600 hover:bg-cyan-500', tagText: 'text-cyan-300' }
+                };
+                return colors[color]?.[type] || "";
+            };
+
+            const renderTextWithGap = () => {
+                if (!currentQuestion) return null;
+                const parts = currentQuestion.text.split("_____");
+                return (
+                    <p className="text-xl leading-relaxed text-slate-300">
+                        {parts[0]}
+                        <span className={`inline-block min-w-[140px] px-4 py-1 mx-2 text-center font-bold border-b-2
+                            ${!isAnswerChecked ? `border-slate-500 text-slate-400 bg-slate-800` :
+                            selectedOption === currentQuestion.correctAnswer ? 'border-emerald-500 text-emerald-400 bg-emerald-500/10' : 'border-rose-500 text-rose-400 bg-rose-500/10'}`}
+                        >
+                            {isAnswerChecked ? selectedOption : '.......'}
+                        </span>
+                        {parts[1]}
+                    </p>
+                );
+            };
+
+            if (!activeUnit) {
+                return (
+                    <div className="min-h-screen flex flex-col items-center py-12 px-4">
+                        <div className="max-w-2xl w-full text-center mb-12">
+                            <div className="bg-blue-500/20 p-4 rounded-2xl inline-block mb-6">
+                                <Icon name="code-2" className="w-12 h-12 text-blue-400" />
+                            </div>
+                            <h1 className="text-4xl font-black text-white mb-4">English for IT Platform</h1>
+                            <p className="text-lg text-slate-400">Contextual Vocabulary Evaluation - B2 Level</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
+                            {Object.keys(UNITS).map(key => (
+                                <button key={key} onClick={() => startUnit(key)} className={`group bg-slate-900 border border-slate-800 hover:border-${UNITS[key].color}-500 hover:shadow-lg rounded-2xl p-8 text-left transition-all duration-300 flex flex-col`}>
+                                    <Icon name="book-open" className={`w-8 h-8 text-${UNITS[key].color}-400 mb-6`} />
+                                    <h2 className="text-2xl font-bold text-white mb-2">{UNITS[key].title}</h2>
+                                    <p className="text-slate-400 font-medium mb-4">{UNITS[key].subtitle}</p>
+                                    <span className={`text-${UNITS[key].color}-400 font-bold flex items-center gap-2 group-hover:translate-x-2 transition-transform mt-auto`}>
+                                        Start <Icon name="play-circle" className="w-5 h-5" />
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                );
+            }
+
+            if (showResults) {
+                const rank = getRank();
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-4">
+                        <div className={`bg-slate-900 border border-slate-700 p-8 rounded-2xl max-w-lg w-full text-center shadow-2xl relative`}>
+                            <button onClick={goHome} className="absolute top-4 left-4 p-2 text-slate-400 hover:text-white bg-slate-800 rounded-lg">
+                                <Icon name="home" className="w-5 h-5" />
+                            </button>
+                            <Icon name="award" className={`w-20 h-20 mx-auto mb-6 mt-4 ${rank.color}`} />
+                            <h1 className="text-3xl font-bold mb-2 text-white">Evaluación Completada</h1>
+                            <div className="bg-slate-800 rounded-xl p-6 mb-8 border border-slate-700">
+                                <span className={`block text-2xl font-bold mb-4 ${rank.color}`}>{rank.title}</span>
+                                <div className="text-5xl font-black text-white mb-4">{score} <span className="text-xl text-slate-500">/ 10</span></div>
+                                <p className="text-slate-300 text-sm">{rank.desc}</p>
+                            </div>
+                            <div className="flex gap-4">
+                                <button onClick={() => startUnit(activeUnit)} className="flex-1 bg-slate-800 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2">
+                                    <Icon name="refresh-ccw" className="w-5 h-5" /> Reintentar
+                                </button>
+                                <button onClick={goHome} className={`flex-1 ${getColorClasses('btn')} text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2`}>
+                                    Unidades <Icon name="chevron-right" className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen flex flex-col items-center py-12 px-4 md:px-8">
+                    <div className="w-full max-w-4xl mb-8 flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                            <button onClick={goHome} className="p-3 text-slate-400 bg-slate-900 border border-slate-800 rounded-xl">
+                                <Icon name="home" className="w-5 h-5" />
+                            </button>
+                            <div>
+                                <h1 className="text-xl font-bold text-white uppercase tracking-tight">Unit: {currentUnitData.title}</h1>
+                                <p className="text-sm text-slate-400">{currentUnitData.subtitle}</p>
+                            </div>
+                        </div>
+                        <div className="bg-slate-900 border border-slate-800 px-4 py-2 rounded-lg flex items-center gap-4">
+                            <span className="text-slate-400 text-xs font-bold uppercase">Score</span>
+                            <span className={`${getColorClasses('text')} font-black text-xl`}>{score}</span>
+                        </div>
+                    </div>
+
+                    <div className="w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-10 shadow-xl relative overflow-hidden">
+                        <div className="absolute top-0 left-0 h-1.5 bg-slate-800 w-full">
+                            <div className={`h-full transition-all duration-500 ${getColorClasses('bg')}`} style={{ width: `${(currentIndex / 10) * 100}%` }} />
+                        </div>
+                        <div className="flex justify-between items-center mb-8 mt-2">
+                            <span className={`px-3 py-1 rounded text-xs font-bold uppercase bg-slate-800 ${getColorClasses('tagText')}`}>{currentQuestion.context}</span>
+                            <span className="text-slate-500 font-bold text-sm">Question {currentIndex + 1} of 10</span>
+                        </div>
+                        <div className="bg-slate-950 border border-slate-800 p-6 md:p-8 rounded-xl mb-10">
+                            {renderTextWithGap()}
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                            {currentQuestion.options.map((option, idx) => {
+                                const isSelected = selectedOption === option;
+                                const isCorrect = option === currentQuestion.correctAnswer;
+                                let btnClasses = "p-5 rounded-xl border-2 text-left font-bold transition-all flex items-center justify-between ";
+                                if (!isAnswerChecked) {
+                                    btnClasses += `border-slate-700 bg-slate-800 text-slate-300 ${getColorClasses('borderHover')}`;
+                                } else {
+                                    if (isSelected && isCorrect) btnClasses += "border-emerald-500 bg-emerald-500/10 text-emerald-400";
+                                    else if (isSelected && !isCorrect) btnClasses += "border-rose-500 bg-rose-500/10 text-rose-400";
+                                    else if (!isSelected && isCorrect) btnClasses += "border-emerald-500/50 text-emerald-500";
+                                    else btnClasses += "border-slate-800 text-slate-600 opacity-50";
+                                }
+                                return (
+                                    <button key={idx} disabled={isAnswerChecked} onClick={() => handleOptionClick(option)} className={btnClasses}>
+                                        <span className="text-lg">{option}</span>
+                                        {isAnswerChecked && isCorrect && <Icon name="check-circle-2" className="w-6 h-6 text-emerald-500" />}
+                                        {isAnswerChecked && isSelected && !isCorrect && <Icon name="x-circle" className="w-6 h-6 text-rose-500" />}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        <div className={`flex justify-end transition-opacity ${isAnswerChecked ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                            <button onClick={handleNextQuestion} className={`text-white font-bold py-3 px-8 rounded-xl flex items-center gap-2 ${getColorClasses('btn')}`}>
+                                {currentIndex + 1 === 10 ? 'Show Results' : 'Next Question'} <Icon name="chevron-right" className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
 </html>
