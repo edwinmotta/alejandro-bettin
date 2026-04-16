@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Interview Mastery - Fill in the Gaps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gap-select {
+            appearance: none;
+            background-color: #f3f4f6;
+            border-bottom: 2px solid #3b82f6;
+            border-radius: 4px;
+            padding: 2px 4px;
+            margin: 0 4px;
+            cursor: pointer;
+            color: #1f2937;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .gap-select:focus {
+            outline: none;
+            background-color: #dbeafe;
+        }
+        .correct {
+            border-bottom-color: #10b981 !important;
+            background-color: #d1fae5 !important;
+        }
+        .incorrect {
+            border-bottom-color: #ef4444 !important;
+            background-color: #fee2e2 !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-900 pb-20">
+
+    <header class="bg-slate-800 text-white py-8 px-4 shadow-lg mb-10 text-center">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold mb-2">Technical Interview: Fill in the Gaps</h1>
+            <p class="text-slate-300">Nivel B2 - Vocabulario de Desarrollo de Software</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4">
+        <div class="bg-white p-8 md:p-12 rounded-xl shadow-md leading-relaxed text-lg">
+            
+            <div id="exercise-container">
+                <p class="mb-6 italic text-slate-500 border-l-4 border-blue-500 pl-4">
+                    "Sure! I’d be happy to.
+                </p>
+
+                <p class="mb-6">
+                    Currently, I am a 
+                    <select class="gap-select" data-answer="Full Stack Developer">
+                        <option value="">[1]</option>
+                        <option value="Systems Architect">Systems Architect</option>
+                        <option value="Full Stack Developer">Full Stack Developer</option>
+                        <option value="Data Scientist">Data Scientist</option>
+                        <option value="DevOps Engineer">DevOps Engineer</option>
+                    </select> 
+                    with over three years of 
+                    <select class="gap-select" data-answer="experience">
+                        <option value="">[2]</option>
+                        <option value="internship">internship</option>
+                        <option value="tenure">tenure</option>
+                        <option value="experience">experience</option>
+                        <option value="background">background</option>
+                    </select>. 
+                    I 
+                    <select class="gap-select" data-answer="specialize">
+                        <option value="">[3]</option>
+                        <option value="specialize">specialize</option>
+                        <option value="dabble">dabble</option>
+                        <option value="improvise">improvise</option>
+                        <option value="experiment">experiment</option>
+                    </select> 
+                    in building 
+                    <select class="gap-select" data-answer="web applications">
+                        <option value="">[4]</option>
+                        <option value="desktop clients">desktop clients</option>
+                        <option value="embedded systems">embedded systems</option>
+                        <option value="web applications">web applications</option>
+                        <option value="legacy software">legacy software</option>
+                    </select> 
+                    using 
+                    <select class="gap-select" data-answer="React">
+                        <option value="">[5]</option>
+                        <option value="Angular">Angular</option>
+                        <option value="React">React</option>
+                        <option value="Vue">Vue</option>
+                        <option value="Svelte">Svelte</option>
+                    </select> 
+                    for the 
+                    <select class="gap-select" data-answer="frontend">
+                        <option value="">[6]</option>
+                        <option value="frontend">frontend</option>
+                        <option value="UI/UX">UI/UX</option>
+                        <option value="middleware">middleware</option>
+                        <option value="logic layer">logic layer</option>
+                    </select> 
+                    and 
+                    <select class="gap-select" data-answer="Node.js">
+                        <option value="">[7]</option>
+                        <option value="Python">Python</option>
+                        <option value="PHP">PHP</option>
+                        <option value="Node.js">Node.js</option>
+                        <option value="Java">Java</option>
+                    </select> 
+                    for the 
+                    <select class="gap-select" data-answer="backend">
+                        <option value="">[8]</option>
+                        <option value="infrastructure">infrastructure</option>
+                        <option value="database">database</option>
+                        <option value="backend">backend</option>
+                        <option value="server-side">server-side</option>
+                    </select>. 
+                    In my current role, I focus on writing 
+                    <select class="gap-select" data-answer="clean">
+                        <option value="">[9]</option>
+                        <option value="obfuscated">obfuscated</option>
+                        <option value="clean">clean</option>
+                        <option value="minified">minified</option>
+                        <option value="legacy">legacy</option>
+                    </select>, 
+                    <select class="gap-select" data-answer="maintainable">
+                        <option value="">[10]</option>
+                        <option value="maintainable">maintainable</option>
+                        <option value="hard-coded">hard-coded</option>
+                        <option value="fragile">fragile</option>
+                        <option value="deprecated">deprecated</option>
+                    </select> 
+                    code and 
+                    <select class="gap-select" data-answer="collaborating">
+                        <option value="">[11]</option>
+                        <option value="merging">merging</option>
+                        <option value="outsourcing">outsourcing</option>
+                        <option value="collaborating">collaborating</option>
+                        <option value="shadowing">shadowing</option>
+                    </select> 
+                    with my team to 
+                    <select class="gap-select" data-answer="deliver">
+                        <option value="">[12]</option>
+                        <option value="deploy">deploy</option>
+                        <option value="deliver">deliver</option>
+                        <option value="commit">commit</option>
+                        <option value="push">push</option>
+                    </select> 
+                    high-quality 
+                    <select class="gap-select" data-answer="features">
+                        <option value="">[13]</option>
+                        <option value="scripts">scripts</option>
+                        <option value="patches">patches</option>
+                        <option value="features">features</option>
+                        <option value="requirements">requirements</option>
+                    </select> 
+                    on time.
+                </p>
+
+                <p class="mb-6">
+                    Before this, I studied 
+                    <select class="gap-select" data-answer="Computer Science">
+                        <option value="">[14]</option>
+                        <option value="Software Engineering">Software Engineering</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="IT Management">IT Management</option>
+                        <option value="Web Design">Web Design</option>
+                    </select> 
+                    and started my career as a 
+                    <select class="gap-select" data-answer="Junior Developer">
+                        <option value="">[15]</option>
+                        <option value="QA Tester">QA Tester</option>
+                        <option value="Project Manager">Project Manager</option>
+                        <option value="Junior Developer">Junior Developer</option>
+                        <option value="Freelancer">Freelancer</option>
+                    </select> 
+                    at a local 
+                    <select class="gap-select" data-answer="startup">
+                        <option value="">[16]</option>
+                        <option value="enterprise">enterprise</option>
+                        <option value="startup">startup</option>
+                        <option value="agency">agency</option>
+                        <option value="vendor">vendor</option>
+                    </select>. 
+                    That experience was great because I had to learn quickly and take on a lot of responsibility. One of my proudest moments there was improving the 
+                    <select class="gap-select" data-answer="database performance">
+                        <option value="">[17]</option>
+                        <option value="server uptime">server uptime</option>
+                        <option value="database performance">database performance</option>
+                        <option value="visual layout">visual layout</option>
+                        <option value="user interface">user interface</option>
+                    </select> 
+                    of our main product, which reduced 
+                    <select class="gap-select" data-answer="loading times">
+                        <option value="">[18]</option>
+                        <option value="latency jitter">latency jitter</option>
+                        <option value="loading times">loading times</option>
+                        <option value="execution cycles">execution cycles</option>
+                        <option value="compilation speed">compilation speed</option>
+                    </select> 
+                    by about 30%.
+                </p>
+
+                <p class="mb-6">
+                    I’ve really enjoyed building 
+                    <select class="gap-select" data-answer="scalable">
+                        <option value="">[19]</option>
+                        <option value="scalable">scalable</option>
+                        <option value="monolithic">monolithic</option>
+                        <option value="ephemeral">ephemeral</option>
+                        <option value="stateless">stateless</option>
+                    </select> 
+                    systems, but now I’m looking to take the next step in a more 
+                    <select class="gap-select" data-answer="international environment">
+                        <option value="">[20]</option>
+                        <option value="remote workplace">remote workplace</option>
+                        <option value="international environment">international environment</option>
+                        <option value="corporate setting">corporate setting</option>
+                        <option value="agile framework">agile framework</option>
+                    </select>. 
+                    That’s why I’m so interested in your company; I’ve seen the 
+                    <select class="gap-select" data-answer="innovative work">
+                        <option value="">[21]</option>
+                        <option value="repetitive tasks">repetitive tasks</option>
+                        <option value="innovative work">innovative work</option>
+                        <option value="legacy maintenance">legacy maintenance</option>
+                        <option value="research papers">research papers</option>
+                    </select> 
+                    you’re doing in the 
+                    <select class="gap-select" data-answer="fintech space">
+                        <option value="">[22]</option>
+                        <option value="fintech space">fintech space</option>
+                        <option value="retail sector">retail sector</option>
+                        <option value="health niche">health niche</option>
+                        <option value="gaming industry">gaming industry</option>
+                    </select>, 
+                    and I’m eager to bring my 
+                    <select class="gap-select" data-answer="technical skills">
+                        <option value="">[23]</option>
+                        <option value="soft skills">soft skills</option>
+                        <option value="technical skills">technical skills</option>
+                        <option value="design skills">design skills</option>
+                        <option value="managerial skills">managerial skills</option>
+                    </select> 
+                    and 
+                    <select class="gap-select" data-answer="problem-solving mindset">
+                        <option value="">[24]</option>
+                        <option value="competitive nature">competitive nature</option>
+                        <option value="problem-solving mindset">problem-solving mindset</option>
+                        <option value="creative vision">creative vision</option>
+                        <option value="fixed perspective">fixed perspective</option>
+                    </select> 
+                    to a team like yours."
+                </p>
+            </div>
+
+            <!-- Panel de Resultados -->
+            <div class="mt-10 pt-6 border-t border-slate-200">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <button id="check-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-all shadow-md active:scale-95 w-full md:w-auto">
+                        Check My Answers
+                    </button>
+                    <div id="score-display" class="text-xl font-bold hidden text-slate-700">
+                        Score: <span id="score-value">0</span> / 24
+                    </div>
+                    <button id="reset-btn" class="text-slate-500 hover:text-slate-800 underline font-medium">
+                        Reset Exercise
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="feedback-message" class="mt-6 p-4 rounded-lg hidden text-center font-medium shadow-sm"></div>
+    </main>
+
+    <script>
+        const checkBtn = document.getElementById('check-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const scoreDisplay = document.getElementById('score-display');
+        const scoreValue = document.getElementById('score-value');
+        const feedbackMsg = document.getElementById('feedback-message');
+        const selects = document.querySelectorAll('.gap-select');
+
+        checkBtn.addEventListener('click', () => {
+            let correctCount = 0;
+            let total = selects.length;
+            let allFilled = true;
+
+            selects.forEach(select => {
+                if (select.value === "") {
+                    allFilled = false;
+                }
+            });
+
+            if (!allFilled) {
+                showFeedback("Please fill all the gaps before checking.", "bg-amber-100 text-amber-800 border border-amber-200");
+                return;
+            }
+
+            selects.forEach(select => {
+                const answer = select.getAttribute('data-answer');
+                if (select.value === answer) {
+                    select.classList.remove('incorrect');
+                    select.classList.add('correct');
+                    correctCount++;
+                } else {
+                    select.classList.remove('correct');
+                    select.classList.add('incorrect');
+                }
+            });
+
+            scoreValue.textContent = correctCount;
+            scoreDisplay.classList.remove('hidden');
+            
+            if (correctCount === total) {
+                showFeedback("Perfect! You have a solid grasp of technical English for developers.", "bg-green-100 text-green-800 border border-green-200");
+            } else if (correctCount > total / 2) {
+                showFeedback(`Good effort! You got ${correctCount} correct. Review the technical terms in red.`, "bg-blue-100 text-blue-800 border border-blue-200");
+            } else {
+                showFeedback("Keep practicing. Technical precision is key in interviews.", "bg-red-100 text-red-800 border border-red-200");
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            selects.forEach(select => {
+                select.value = "";
+                select.classList.remove('correct', 'incorrect');
+            });
+            scoreDisplay.classList.add('hidden');
+            feedbackMsg.classList.add('hidden');
+        });
+
+        function showFeedback(text, classes) {
+            feedbackMsg.className = `mt-6 p-4 rounded-lg font-medium ${classes}`;
+            feedbackMsg.textContent = text;
+            feedbackMsg.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
