@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Incident Report - Grammar Match</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .drop-zone {
+            min-width: 120px;
+            display: inline-block;
+            border-bottom: 2px dashed #94a3b8;
+            padding: 0 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2563eb;
+            font-weight: bold;
+        }
+        .drop-zone:hover {
+            background-color: #f1f5f9;
+        }
+        .correct {
+            color: #059669;
+            border-bottom-color: #059669;
+        }
+        .incorrect {
+            color: #dc2626;
+            border-bottom-color: #dc2626;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-900">
+
+    <div class="max-w-4xl mx-auto py-10 px-4">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">🚨 Post-Mortem Grammar Challenge</h1>
+            <p class="text-slate-600">Completa el reporte técnico usando <b>There was, There were, Could</b> o <b>Couldn't</b>.</p>
+        </header>
+
+        <!-- Scenario Card -->
+        <div class="bg-blue-900 text-white p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-xl font-semibold mb-2 flex items-center">
+                <span class="mr-2">📅</span> Scenario: Last Friday Incident
+            </h2>
+            <p class="italic opacity-90">
+                "Last Friday, the production server crashed for 4 hours. We lost data from 200 users. Today, we have a meeting to understand what happened and why we didn't solve it faster."
+            </p>
+        </div>
+
+        <!-- Feedback Panel (Hidden by default) -->
+        <div id="feedback-panel" class="hidden mb-6 p-4 rounded-lg border-2 bg-white shadow-sm">
+            <p id="feedback-text" class="font-medium"></p>
+            <p id="explanation-text" class="text-sm text-slate-600 mt-2"></p>
+        </div>
+
+        <!-- Game Area -->
+        <div class="bg-white p-8 rounded-xl shadow-md">
+            <div id="questions-container" class="space-y-6">
+                <!-- Questions will be injected here -->
+            </div>
+
+            <!-- Controls -->
+            <div class="mt-10 flex flex-col items-center">
+                <div id="score-display" class="mb-4 text-lg font-bold text-slate-700">Puntuación: 0 / 20</div>
+                <button id="reset-btn" class="bg-slate-800 text-white px-6 py-2 rounded-full hover:bg-slate-700 transition">
+                    Reiniciar Práctica
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Selection -->
+    <div id="selection-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full">
+            <h3 class="text-lg font-bold mb-4 text-center">Selecciona la opción correcta:</h3>
+            <div class="grid grid-cols-1 gap-3">
+                <button class="option-btn p-3 bg-slate-100 hover:bg-blue-100 rounded-lg font-semibold transition text-blue-700" data-value="There was">There was</button>
+                <button class="option-btn p-3 bg-slate-100 hover:bg-blue-100 rounded-lg font-semibold transition text-blue-700" data-value="There were">There were</button>
+                <button class="option-btn p-3 bg-slate-100 hover:bg-blue-100 rounded-lg font-semibold transition text-blue-700" data-value="Could">Could</button>
+                <button class="option-btn p-3 bg-slate-100 hover:bg-blue-100 rounded-lg font-semibold transition text-blue-700" data-value="Couldn't">Couldn't</button>
+            </div>
+            <button id="close-modal" class="mt-4 w-full text-slate-400 text-sm hover:underline">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        const data = [
+            { id: 0, text: "_____ a critical bug in the production server.", answer: "There was", explanation: "'There was' se usa para existencia en pasado con sustantivos singulares ('a critical bug')." },
+            { id: 1, text: "_____ traffic spikes right before the crash.", answer: "There were", explanation: "'There were' se usa para existencia en pasado con sustantivos plurales ('spikes')." },
+            { id: 2, text: "_____ not enough RAM to handle the load.", answer: "There was", explanation: "RAM es un sustantivo incontable, por lo tanto usamos 'There was' (singular)." },
+            { id: 3, text: "_____ several error messages in the log files.", answer: "There were", explanation: "'There were' porque hablamos de múltiples elementos ('several error messages')." },
+            { id: 4, text: "_____ a backup, but it was outdated.", answer: "There was", explanation: "'There was' indica la existencia de un solo objeto ('a backup')." },
+            { id: 5, text: "_____ no senior developers available at the moment.", answer: "There were", explanation: "Aunque la oración es negativa ('no'), el sustantivo 'developers' es plural, por lo que requiere 'There were'." },
+            { id: 6, text: "The team _____ access the server during the outage.", answer: "Couldn't", explanation: "'Couldn't' (could not) expresa la incapacidad o imposibilidad de realizar una acción en el pasado." },
+            { id: 7, text: "We _____ see some logs, but not all of them.", answer: "Could", explanation: "'Could' expresa una habilidad o posibilidad lograda en el pasado." },
+            { id: 8, text: "They _____ find the root cause immediately.", answer: "Couldn't", explanation: "Indica que no fue posible realizar la acción de encontrar la causa en ese momento." },
+            { id: 9, text: "We _____ restore part of the data from the backup.", answer: "Could", explanation: "Indica una acción que fue posible realizar exitosamente." },
+            { id: 10, text: "The engineers _____ deploy a hotfix quickly.", answer: "Couldn't", explanation: "Indica una limitación o imposibilidad técnica en el pasado." },
+            { id: 11, text: "_____ a misconfiguration in the database.", answer: "There was", explanation: "Sustantivo singular ('a misconfiguration')." },
+            { id: 12, text: "_____ multiple failed requests from users.", answer: "There were", explanation: "Sustantivo plural ('multiple failed requests')." },
+            { id: 13, text: "We _____ identify a memory leak after checking the logs.", answer: "Could", explanation: "Indica la capacidad de realizar el diagnóstico." },
+            { id: 14, text: "The system _____ recover automatically.", answer: "Couldn't", explanation: "Falta de capacidad del sistema para realizar la acción." },
+            { id: 15, text: "_____ a delay in the response from the monitoring system.", answer: "There was", explanation: "Sustantivo singular ('a delay')." },
+            { id: 16, text: "_____ not enough alerts configured.", answer: "There were", explanation: "'Alerts' es plural, por lo que usamos 'There were'." },
+            { id: 17, text: "We _____ improve the backup strategy after the incident.", answer: "Could", explanation: "Expresa una posibilidad o capacidad futura basada en el pasado." },
+            { id: 18, text: "The team _____ communicate effectively during the crisis.", answer: "Couldn't", explanation: "Expresa una falla en la habilidad de comunicación durante el evento." },
+            { id: 19, text: "_____ confusion about who could fix the issue.", answer: "There was", explanation: "'Confusion' es un sustantivo abstracto e incontable, se trata como singular." }
+        ];
+
+        let score = 0;
+        let currentDropZone = null;
+        const questionsContainer = document.getElementById('questions-container');
+        const selectionModal = document.getElementById('selection-modal');
+        const feedbackPanel = document.getElementById('feedback-panel');
+        const feedbackText = document.getElementById('feedback-text');
+        const explanationText = document.getElementById('explanation-text');
+        const scoreDisplay = document.getElementById('score-display');
+
+        function init() {
+            questionsContainer.innerHTML = '';
+            score = 0;
+            updateScore();
+            data.forEach((item, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'flex items-start gap-3 p-3 rounded hover:bg-slate-50 transition';
+                
+                const parts = item.text.split('_____');
+                qDiv.innerHTML = `
+                    <span class="text-slate-400 font-mono mt-1">${index + 1}.</span>
+                    <p class="text-lg">
+                        ${parts[0]}
+                        <span class="drop-zone" data-id="${item.id}" id="zone-${item.id}">...</span>
+                        ${parts[1]}
+                    </p>
+                `;
+                questionsContainer.appendChild(qDiv);
+            });
+
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.addEventListener('click', (e) => {
+                    if (zone.classList.contains('correct')) return;
+                    currentDropZone = zone;
+                    selectionModal.classList.remove('hidden');
+                });
+            });
+        }
+
+        function updateScore() {
+            scoreDisplay.innerText = `Puntuación: ${score} / ${data.length}`;
+        }
+
+        function showFeedback(isCorrect, explanation) {
+            feedbackPanel.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackPanel.classList.remove('border-red-200', 'bg-red-50');
+                feedbackPanel.classList.add('border-green-200', 'bg-green-50');
+                feedbackText.innerText = "¡Correcto!";
+                feedbackText.className = "font-bold text-green-700";
+            } else {
+                feedbackPanel.classList.remove('border-green-200', 'bg-green-50');
+                feedbackPanel.classList.add('border-red-200', 'bg-red-50');
+                feedbackText.innerText = "Inténtalo de nuevo";
+                feedbackText.className = "font-bold text-red-700";
+            }
+            explanationText.innerText = explanation;
+        }
+
+        document.querySelectorAll('.option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const val = btn.getAttribute('data-value');
+                const id = currentDropZone.getAttribute('data-id');
+                const item = data.find(d => d.id == id);
+
+                selectionModal.classList.add('hidden');
+
+                if (val === item.answer) {
+                    currentDropZone.innerText = val;
+                    currentDropZone.classList.add('correct');
+                    currentDropZone.classList.remove('incorrect');
+                    score++;
+                    updateScore();
+                    showFeedback(true, item.explanation);
+                } else {
+                    currentDropZone.innerText = val;
+                    currentDropZone.classList.add('incorrect');
+                    showFeedback(false, "Esa opción no encaja aquí. " + item.explanation);
+                }
+            });
+        });
+
+        document.getElementById('close-modal').addEventListener('click', () => {
+            selectionModal.classList.add('hidden');
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            feedbackPanel.classList.add('hidden');
+            init();
+        });
+
+        window.onload = init;
+    </script>
+</body>
+</html>
