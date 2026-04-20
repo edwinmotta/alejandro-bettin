@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Evaluación - 1st. Project</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Estilos personalizados para los radio buttons (Inglés) */
+        .rubric-radio:checked + div {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        }
+        /* Estilos personalizados para los radio buttons (Software) */
+        .rubric-radio-software:checked + div {
+            border-color: #10b981;
+            background-color: #ecfdf5;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Ocultar barra de scroll para los contenedores de opciones */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Encabezado -->
+    <header class="bg-slate-900 text-white shadow-xl relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+        <div class="max-w-6xl mx-auto px-6 py-8 relative z-10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold tracking-tight">Evaluación "1st. Project"</h1>
+                    <p class="text-slate-300 mt-1 font-light">The Expert’s Professional Portfolio and Solution Pitch</p>
+                </div>
+                <!-- Panel superior de puntuación oculto inicialmente -->
+                <div id="topScorePanel" class="hidden bg-slate-800/50 backdrop-blur-sm rounded-lg px-4 py-2 border border-slate-700/50 inline-block w-fit fade-in">
+                    <span class="text-sm text-slate-400 block">Puntuación Total</span>
+                    <span class="text-2xl font-bold text-white"><span id="scoreDisplayTop">0</span><span class="text-sm font-normal text-slate-400">/25 pts</span></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+        
+        <!-- Bloque Obligatorio: Selector de Jurado -->
+        <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200 mb-8 text-center transition-all duration-500" id="roleSelectorContainer">
+            <h2 id="rolePromptText" class="text-xl md:text-2xl font-bold text-slate-800 mb-6">¿Qué tipo de jurado es usted? Seleccione para desbloquear el formulario:</h2>
+            <div class="flex flex-col sm:flex-row gap-4 max-w-3xl mx-auto">
+                <!-- Botón neutral inicial que luego toma color -->
+                <button onclick="selectRole('english')" id="btnEnglish" class="flex-1 py-5 px-6 rounded-xl font-semibold text-lg transition-all duration-300 border-2 border-blue-500 text-blue-600 bg-white hover:bg-blue-50 shadow-sm">
+                    <div class="flex items-center justify-center gap-3">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+                        Soy Jurado de Inglés
+                    </div>
+                </button>
+                <button onclick="selectRole('software')" id="btnSoftware" class="flex-1 py-5 px-6 rounded-xl font-semibold text-lg transition-all duration-300 border-2 border-emerald-500 text-emerald-600 bg-white hover:bg-emerald-50 shadow-sm">
+                    <div class="flex items-center justify-center gap-3">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                        Soy Jurado de Software
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Espera (Se oculta al seleccionar rol) -->
+        <div id="initialStateMessage" class="text-center py-16">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-200 text-slate-400 mb-6 shadow-inner">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-medium text-slate-500">Formulario Bloqueado</h3>
+            <p class="text-slate-400 mt-2 text-lg">Por favor, seleccione su rol arriba para evitar rellenar la evaluación equivocada.</p>
+        </div>
+
+        <!-- CONTENEDOR PRINCIPAL DEL FORMULARIO (Oculto hasta elegir rol) -->
+        <div id="evaluationContent" class="hidden">
+            
+            <!-- Info General -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 fade-in" style="animation-delay: 0.1s;">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-500 mb-2 uppercase tracking-wide">Nombre del Estudiante</label>
+                        <input type="text" id="studentName" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Ej. Juan Pérez">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-500 mb-2 uppercase tracking-wide">Nombre del Evaluador</label>
+                        <input type="text" id="evaluatorName" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" placeholder="Tu nombre">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-500 mb-2 uppercase tracking-wide">Fecha</label>
+                        <input type="date" id="evalDate" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-slate-700">
+                    </div>
+                </div>
+            </section>
+
+            <!-- GUÍA DE INTERPRETACIÓN (Común, cambia de color según rol) -->
+            <div id="guideContainer" class="bg-blue-50 border border-blue-100 rounded-2xl p-6 mb-8 transition-colors duration-300 fade-in" style="animation-delay: 0.2s;">
+                <h3 class="font-bold text-lg mb-3 flex items-center gap-2" id="guideTitle">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Guía de Interpretación (1 a 5)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="bg-white/60 p-4 rounded-xl">
+                        <span class="font-bold block mb-1">5 (Expert/Senior)</span>
+                        <p class="text-slate-600">El estudiante actúa como un consultor técnico; el lenguaje es una herramienta de precisión y la lógica técnica es impecable.</p>
+                    </div>
+                    <div class="bg-white/60 p-4 rounded-xl">
+                        <span class="font-bold block mb-1">3 (Competent/Mid)</span>
+                        <p class="text-slate-600">La comunicación es funcional y los conceptos técnicos son claros, pero hay errores menores de gramática o falta matizar la profundidad técnica.</p>
+                    </div>
+                    <div class="bg-white/60 p-4 rounded-xl">
+                        <span class="font-bold block mb-1">1 (Insufficient/Entry)</span>
+                        <p class="text-slate-600">La comunicación falla en un entorno profesional de TI; el vocabulario es muy genérico y hay errores gramaticales básicos que impiden la comprensión.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- FORMULARIO 1: EVALUACIÓN DE INGLÉS -->
+            <!-- ========================================== -->
+            <form id="englishForm" class="fade-in space-y-6 hidden" style="animation-delay: 0.3s;">
+                <div class="mb-2">
+                    <h2 class="text-2xl font-bold text-slate-800">Evaluación de Competencia Lingüística</h2>
+                    <p class="text-slate-500">Basado en la "Rubric for English Expert Evaluators".</p>
+                </div>
+
+                <!-- Eng Criterio 1 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">1. Dominio de Rutinas y Protocolos</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">¿Qué tan preciso fue el estudiante al usar el Presente Simple y Adverbios de Frecuencia para definir sus protocolos de seguridad y fiabilidad técnica?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4 text-sm font-medium text-slate-400 px-2">
+                            <span>1 (No logra describir coherente)</span>
+                            <span>5 (Sin errores de posición)</span>
+                        </div>
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q1" value="1" class="rubric-radio peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q1" value="2" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q1" value="3" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q1" value="4" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q1" value="5" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eng Criterio 2 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">2. Estructura Narrativa (The War Story)</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">¿Qué tan efectiva fue la ejecución de la estructura Pasado-Presente-Pasado, utilizando el Presente Histórico para hacer el clímax de su historia técnico-profesional vívido y proactivo?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q2" value="1" class="rubric-radio peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q2" value="2" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q2" value="3" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q2" value="4" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q2" value="5" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eng Criterio 3 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">3. Lenguaje Estratégico</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">¿Con qué nivel de precisión utilizó el estudiante los Verbos Modales para hacer recomendaciones y el Primer Condicional para proyectar riesgos y consecuencias técnicas?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q3" value="1" class="rubric-radio peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q3" value="2" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q3" value="3" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q3" value="4" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q3" value="5" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eng Criterio 4 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">4. Precisión en el Q&A</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">Durante la sesión de preguntas, ¿qué tan bien mantuvo el estudiante la estructura de preguntas (Auxiliar + Sujeto + Verbo) y la regla de la tercera persona al hablar de componentes del sistema (ej. "the server runs")?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q4" value="1" class="rubric-radio peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q4" value="2" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q4" value="3" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q4" value="4" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q4" value="5" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eng Criterio 5 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">5. Fluidez y Entrega Profesional</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">¿Qué tan fluido, espontáneo y profesional fue el desempeño del estudiante, manejando las preguntas de seguimiento sin dependencia excesiva de notas?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q5" value="1" class="rubric-radio peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q5" value="2" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q5" value="3" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q5" value="4" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="eng_q5" value="5" class="rubric-radio peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-blue-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Inglés -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <label class="block text-lg font-bold text-slate-800 mb-3">Feedback Adicional (Opcional)</label>
+                    <textarea id="eng_comments" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all" placeholder="Escribe aquí tus comentarios, observaciones sobre pronunciación, áreas de mejora, etc..."></textarea>
+                </div>
+            </form>
+
+            <!-- ========================================== -->
+            <!-- FORMULARIO 2: EVALUACIÓN DE SOFTWARE -->
+            <!-- ========================================== -->
+            <form id="softwareForm" class="hidden fade-in space-y-6" style="animation-delay: 0.3s;">
+                <div class="mb-2">
+                    <h2 class="text-2xl font-bold text-slate-800">Evaluación de Sustancia Técnica</h2>
+                    <p class="text-slate-500">Basado en la "Rubric for Software Engineer Evaluators".</p>
+                </div>
+
+                <!-- Soft Criterio 1 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">1. Profundidad Técnica y Vocabulario</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">¿Qué tan bien integró el estudiante vocabulario avanzado de TI (ej. payload, bottleneck, refactor, legacy code) de forma lógica para justificar sus decisiones?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4 text-sm font-medium text-slate-400 px-2">
+                            <span>1 (Vocabulario genérico)</span>
+                            <span>5 (Integración lógica/avanzada)</span>
+                        </div>
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q1" value="1" class="rubric-radio-software peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q1" value="2" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q1" value="3" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q1" value="4" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q1" value="5" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soft Criterio 2 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">2. Excelencia Operacional</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">¿Demostró el estudiante altos estándares de Seniority al explicar procesos automatizados y comportamientos consistentes del sistema en su día a día?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q2" value="1" class="rubric-radio-software peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q2" value="2" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q2" value="3" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q2" value="4" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q2" value="5" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soft Criterio 3 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">3. Capacidad de Resolución de Problemas</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">En la narrativa del proyecto, ¿qué tan claro fue el impacto de la intervención del estudiante para mejorar el rendimiento o la fiabilidad del sistema en el desafío planteado?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q3" value="1" class="rubric-radio-software peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q3" value="2" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q3" value="3" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q3" value="4" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q3" value="5" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soft Criterio 4 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">4. Mitigación de Riesgos y Lógica</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">¿Qué tan robusta y lógica fue la propuesta de innovación y el análisis de los puntos críticos de falla identificados en el sistema legado?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q4" value="1" class="rubric-radio-software peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q4" value="2" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q4" value="3" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q4" value="4" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q4" value="5" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Soft Criterio 5 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-5 border-b border-slate-200">
+                        <h4 class="font-bold text-slate-800 text-lg">5. Visión Estratégica e Indagación</h4>
+                        <p class="text-slate-600 mt-2 leading-relaxed">¿Qué tanto demuestra la pregunta de investigación final una mentalidad orientada al futuro del sistema y al pensamiento estratégico?</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-3 justify-between">
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q5" value="1" class="rubric-radio-software peer sr-only" required><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">1</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q5" value="2" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">2</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q5" value="3" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">3</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q5" value="4" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">4</div></label>
+                            <label class="flex-1 cursor-pointer relative"><input type="radio" name="soft_q5" value="5" class="rubric-radio-software peer sr-only"><div class="h-14 border-2 border-slate-200 rounded-xl flex items-center justify-center font-bold text-lg text-slate-500 peer-checked:text-emerald-600 hover:bg-slate-50 transition-all">5</div></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Software -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <label class="block text-lg font-bold text-slate-800 mb-3">Feedback Adicional (Opcional)</label>
+                    <textarea id="soft_comments" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" placeholder="Observaciones sobre la viabilidad de la arquitectura, lógica de negocio, sugerencias, etc..."></textarea>
+                </div>
+            </form>
+
+            <!-- ========================================== -->
+            <!-- RECORDATORIO FINAL (Para ambos jurados)    -->
+            <!-- ========================================== -->
+            <div class="mt-8 bg-amber-50 border border-amber-200 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 shadow-sm fade-in" style="animation-delay: 0.4s;">
+                <div class="bg-amber-100 p-3 rounded-full text-amber-600 shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-amber-900 text-lg">¡Recordatorio Importante!</h4>
+                    <p class="text-amber-800 mt-1">Al terminar la evaluación, por favor recuerde hacer clic en el botón <strong>"Copiar Resultados"</strong> en el panel inferior y enviar el texto pegado al profesor encargado a través de WhatsApp.</p>
+                </div>
+            </div>
+
+            <!-- Espacio extra abajo para que el panel flotante no tape el contenido -->
+            <div class="h-28"></div>
+        </div> <!-- Fin de evaluationContent -->
+
+        <!-- Panel Flotante Inferior (Se muestra tras seleccionar) -->
+        <div id="bottomFloatingPanel" class="fixed bottom-0 left-0 right-0 p-4 md:p-6 z-50 pointer-events-none hidden fade-in">
+            <div class="max-w-6xl mx-auto flex justify-end">
+                <div class="bg-slate-900 text-white p-4 rounded-2xl shadow-2xl flex items-center gap-6 pointer-events-auto border border-slate-700">
+                    <div class="hidden sm:block">
+                        <p class="text-sm text-slate-400">Total <span id="currentRoleFooter">Inglés</span></p>
+                        <p class="text-2xl font-bold"><span id="scoreDisplayBottom">0</span><span class="text-sm font-normal text-slate-400">/25</span></p>
+                    </div>
+                    <button onclick="generateReport()" class="bg-white text-slate-900 font-bold py-3 px-6 rounded-xl shadow-sm hover:bg-slate-100 transition-all flex items-center gap-2 transform active:scale-95">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                        <span>Copiar Resultados</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast de Éxito -->
+    <div id="toast" class="fixed top-4 right-4 bg-slate-900 text-white px-6 py-4 rounded-xl shadow-2xl transform transition-all duration-300 translate-x-full opacity-0 z-50 flex items-center gap-3">
+        <div class="bg-green-500 rounded-full p-1">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <span class="font-medium">Evaluación copiada al portapapeles</span>
+    </div>
+
+    <!-- Script de Funcionalidad -->
+    <script>
+        // Set today's date
+        document.getElementById('evalDate').valueAsDate = new Date();
+
+        let currentRole = null; // Inicia en null para forzar la selección
+
+        // Elementos UI
+        const btnEnglish = document.getElementById('btnEnglish');
+        const btnSoftware = document.getElementById('btnSoftware');
+        const englishForm = document.getElementById('englishForm');
+        const softwareForm = document.getElementById('softwareForm');
+        const rolePromptText = document.getElementById('rolePromptText');
+        const roleSelectorContainer = document.getElementById('roleSelectorContainer');
+        
+        const scoreDisplayTop = document.getElementById('scoreDisplayTop');
+        const scoreDisplayBottom = document.getElementById('scoreDisplayBottom');
+        const currentRoleFooter = document.getElementById('currentRoleFooter');
+        const topScorePanel = document.getElementById('topScorePanel');
+        const toast = document.getElementById('toast');
+        
+        // Elementos de la Guía y Contenedores principales
+        const guideContainer = document.getElementById('guideContainer');
+        const guideTitle = document.getElementById('guideTitle');
+        const initialStateMessage = document.getElementById('initialStateMessage');
+        const evaluationContent = document.getElementById('evaluationContent');
+        const bottomFloatingPanel = document.getElementById('bottomFloatingPanel');
+
+        // Escuchar cambios en los radio buttons para actualizar el score
+        document.querySelectorAll('input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', calculateScore);
+        });
+
+        function selectRole(role) {
+            currentRole = role;
+            
+            // Ocultar pantalla de bloqueo y mostrar contenido
+            initialStateMessage.classList.add('hidden');
+            evaluationContent.classList.remove('hidden');
+            bottomFloatingPanel.classList.remove('hidden');
+            topScorePanel.classList.remove('hidden');
+            
+            // Cambiar el texto del header de selección para que sea más sutil una vez elegido
+            rolePromptText.textContent = "Rol Actual:";
+            rolePromptText.className = "text-sm font-semibold text-slate-400 mb-3 uppercase tracking-wide";
+            roleSelectorContainer.className = "bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-8 text-center transition-all duration-500";
+            
+            if(role === 'english') {
+                // Estilos botones (Inglés activo)
+                btnEnglish.className = "flex-1 py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 bg-blue-600 text-white shadow-md border-2 border-blue-600 transform scale-[1.02]";
+                btnSoftware.className = "flex-1 py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 bg-transparent text-slate-400 hover:bg-slate-50 hover:text-emerald-600 border-2 border-transparent opacity-80 hover:opacity-100";
+                
+                // Mostrar/Ocultar forms
+                englishForm.classList.remove('hidden');
+                softwareForm.classList.add('hidden');
+                currentRoleFooter.textContent = 'Inglés';
+                
+                // Estilos Guía
+                guideContainer.className = "bg-blue-50 border border-blue-100 rounded-2xl p-6 mb-8 transition-colors duration-300 fade-in";
+                guideTitle.className = "font-bold text-lg mb-3 flex items-center gap-2 text-blue-800";
+
+            } else {
+                // Estilos botones (Software activo)
+                btnSoftware.className = "flex-1 py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 bg-emerald-600 text-white shadow-md border-2 border-emerald-600 transform scale-[1.02]";
+                btnEnglish.className = "flex-1 py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-300 bg-transparent text-slate-400 hover:bg-slate-50 hover:text-blue-600 border-2 border-transparent opacity-80 hover:opacity-100";
+                
+                // Mostrar/Ocultar forms
+                softwareForm.classList.remove('hidden');
+                englishForm.classList.add('hidden');
+                currentRoleFooter.textContent = 'Software';
+
+                // Estilos Guía
+                guideContainer.className = "bg-emerald-50 border border-emerald-100 rounded-2xl p-6 mb-8 transition-colors duration-300 fade-in";
+                guideTitle.className = "font-bold text-lg mb-3 flex items-center gap-2 text-emerald-800";
+            }
+            
+            // Recalcular puntaje al cambiar de pestaña
+            calculateScore();
+        }
+
+        function calculateScore() {
+            let total = 0;
+            const prefix = currentRole === 'english' ? 'eng_q' : 'soft_q';
+            
+            for(let i = 1; i <= 5; i++) {
+                const checked = document.querySelector(`input[name="${prefix}${i}"]:checked`);
+                if(checked) {
+                    total += parseInt(checked.value);
+                }
+            }
+
+            scoreDisplayTop.textContent = total;
+            scoreDisplayBottom.textContent = total;
+        }
+
+        function generateReport() {
+            if(!currentRole) {
+                alert("Primero debes seleccionar un rol.");
+                return;
+            }
+
+            const student = document.getElementById('studentName').value || 'No especificado';
+            const evaluator = document.getElementById('evaluatorName').value || 'No especificado';
+            const date = document.getElementById('evalDate').value;
+            const score = scoreDisplayTop.textContent;
+            
+            // Validar que se hayan respondido todas las preguntas
+            const prefix = currentRole === 'english' ? 'eng_q' : 'soft_q';
+            let todasRespondidas = true;
+            for(let i = 1; i <= 5; i++) {
+                if(!document.querySelector(`input[name="${prefix}${i}"]:checked`)) {
+                    todasRespondidas = false;
+                }
+            }
+
+            if(!todasRespondidas) {
+                alert("Por favor, califica todas las 5 preguntas antes de copiar los resultados.");
+                return;
+            }
+
+            let text = `=======================================\n`;
+            text += `EVALUACIÓN 1ST. PROJECT - ${currentRole === 'english' ? 'JURADO DE INGLÉS' : 'JURADO DE SOFTWARE'}\n`;
+            text += `=======================================\n`;
+            text += `Estudiante: ${student}\n`;
+            text += `Evaluador: ${evaluator}\n`;
+            text += `Fecha: ${date}\n`;
+            text += `PUNTUACIÓN TOTAL: ${score} / 25 pts\n`;
+            text += `---------------------------------------\n\n`;
+
+            if (currentRole === 'english') {
+                const q1 = document.querySelector('input[name="eng_q1"]:checked').value;
+                const q2 = document.querySelector('input[name="eng_q2"]:checked').value;
+                const q3 = document.querySelector('input[name="eng_q3"]:checked').value;
+                const q4 = document.querySelector('input[name="eng_q4"]:checked').value;
+                const q5 = document.querySelector('input[name="eng_q5"]:checked').value;
+                const comments = document.getElementById('eng_comments').value || 'Sin comentarios adicionales.';
+                
+                text += `Desglose por Criterios (Escala 1 al 5):\n`;
+                text += `1. Dominio de Rutinas y Protocolos: [${q1}/5]\n`;
+                text += `2. Estructura Narrativa (War Story): [${q2}/5]\n`;
+                text += `3. Lenguaje Estratégico (Modales/Condicional): [${q3}/5]\n`;
+                text += `4. Precisión en el Q&A: [${q4}/5]\n`;
+                text += `5. Fluidez y Entrega Profesional: [${q5}/5]\n\n`;
+                text += `Feedback del Evaluador:\n${comments}\n`;
+            } else {
+                const q1 = document.querySelector('input[name="soft_q1"]:checked').value;
+                const q2 = document.querySelector('input[name="soft_q2"]:checked').value;
+                const q3 = document.querySelector('input[name="soft_q3"]:checked').value;
+                const q4 = document.querySelector('input[name="soft_q4"]:checked').value;
+                const q5 = document.querySelector('input[name="soft_q5"]:checked').value;
+                const comments = document.getElementById('soft_comments').value || 'Sin comentarios adicionales.';
+                
+                text += `Desglose por Criterios (Escala 1 al 5):\n`;
+                text += `1. Profundidad Técnica y Vocabulario: [${q1}/5]\n`;
+                text += `2. Excelencia Operacional: [${q2}/5]\n`;
+                text += `3. Resolución de Problemas: [${q3}/5]\n`;
+                text += `4. Mitigación de Riesgos y Lógica: [${q4}/5]\n`;
+                text += `5. Visión Estratégica e Indagación: [${q5}/5]\n\n`;
+                text += `Feedback del Evaluador:\n${comments}\n`;
+            }
+
+            // Lógica para copiar al portapapeles
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToast();
+            } catch (err) {
+                console.error('Fallo al copiar', err);
+                alert("Tu navegador bloqueó la acción. Copia el texto manualmente:\n\n" + text);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function showToast() {
+            toast.classList.remove('translate-x-full', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
